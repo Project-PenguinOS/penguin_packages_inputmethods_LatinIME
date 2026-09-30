@@ -118,6 +118,13 @@ public final class KeyboardTheme implements Comparable<KeyboardTheme> {
     /* package private for testing */
     static KeyboardTheme getDefaultKeyboardTheme(final SharedPreferences prefs,
             final int sdkVersion, final KeyboardTheme[] availableThemeArray) {
+        if (sdkVersion >= Build.VERSION_CODES.S) {
+            final KeyboardTheme glass = searchKeyboardThemeById(THEME_ID_GLASS,
+                    availableThemeArray);
+            if (glass != null) {
+                return glass;
+            }
+        }
         // TODO: This search algorithm isn't optimal if there are many themes.
         for (final KeyboardTheme theme : availableThemeArray) {
             if (sdkVersion >= theme.mMinApiVersion) {
@@ -137,6 +144,19 @@ public final class KeyboardTheme implements Comparable<KeyboardTheme> {
 
     public static void saveKeyboardThemeId(final int themeId, final SharedPreferences prefs) {
         prefs.edit().putString(LXX_KEYBOARD_THEME_KEY, Integer.toString(themeId)).apply();
+    }
+
+    private static final String GLASS_MIGRATION_KEY = "pref_glass_theme_migrated";
+
+    public static void migrateToGlass(final Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean(GLASS_MIGRATION_KEY, false)) {
+            return;
+        }
+        prefs.edit()
+                .putString(LXX_KEYBOARD_THEME_KEY, Integer.toString(THEME_ID_GLASS))
+                .putBoolean(GLASS_MIGRATION_KEY, true)
+                .apply();
     }
 
     public static boolean isGlass(final Context context) {

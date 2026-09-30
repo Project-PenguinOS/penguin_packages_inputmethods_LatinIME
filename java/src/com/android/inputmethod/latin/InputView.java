@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.WindowInsets;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -48,6 +49,18 @@ public final class InputView extends FrameLayout {
                 mMainKeyboardView, suggestionStripView);
         mMoreSuggestionsViewCanceler = new MoreSuggestionsViewCanceler(
                 mMainKeyboardView, suggestionStripView);
+    }
+
+    @Override
+    public WindowInsets onApplyWindowInsets(final WindowInsets insets) {
+        final int bottom = Math.max(
+                insets.getInsets(WindowInsets.Type.navigationBars()).bottom,
+                insets.getInsets(WindowInsets.Type.tappableElement()).bottom);
+        android.util.Log.d("InputView", "bottom inset " + bottom);
+        if (getPaddingBottom() != bottom) {
+            setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), bottom);
+        }
+        return super.onApplyWindowInsets(insets);
     }
 
     public void setKeyboardTopPadding(final int keyboardTopPadding) {

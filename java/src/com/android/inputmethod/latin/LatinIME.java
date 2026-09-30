@@ -617,6 +617,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mStatsUtilsManager.onCreate(this /* context */, mDictionaryFacilitator);
         final WindowManager wm = getSystemService(WindowManager.class);
         mDisplayContext = getDisplayContext();
+        KeyboardTheme.migrateToGlass(this);
         KeyboardSwitcher.init(this);
         Fonts.init(this);
         setTheme(R.style.PenguinImeWindow);

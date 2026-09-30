@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="glass_sheet_tint">#A6DCDEE3</color>
+    <color name="glass_sheet_tint">#66E4E6EA</color>
     <color name="glass_sheet_tint_opaque">#FFD1D4D9</color>
     <color name="glass_sheet_rim">#80FFFFFF</color>
     <color name="glass_key">#E6FFFFFF</color>
