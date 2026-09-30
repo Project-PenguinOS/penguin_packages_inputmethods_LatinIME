@@ -56,9 +56,10 @@ public final class InputView extends FrameLayout {
         final int bottom = Math.max(
                 insets.getInsets(WindowInsets.Type.navigationBars()).bottom,
                 insets.getInsets(WindowInsets.Type.tappableElement()).bottom);
-        android.util.Log.d("InputView", "bottom inset " + bottom);
-        if (getPaddingBottom() != bottom) {
-            setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), bottom);
+        final int overlap = Math.round(16 * getResources().getDisplayMetrics().density);
+        final int padding = Math.max(0, bottom - overlap);
+        if (getPaddingBottom() != padding) {
+            setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), padding);
         }
         return super.onApplyWindowInsets(insets);
     }

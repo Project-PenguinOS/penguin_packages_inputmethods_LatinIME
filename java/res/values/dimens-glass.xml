@@ -5,7 +5,7 @@
     <dimen name="glass_sheet_rim_width">0.7dp</dimen>
     <dimen name="glass_key_corner_radius">8.5dp</dimen>
     <dimen name="glass_key_shadow_height">1dp</dimen>
-    <dimen name="glass_bottom_bar_height">52dp</dimen>
+    <dimen name="glass_bottom_bar_height">44dp</dimen>
     <dimen name="glass_bottom_bar_icon_size">27dp</dimen>
     <dimen name="glass_bottom_bar_side_padding">22dp</dimen>
     <dimen name="glass_suggestions_strip_height">46dp</dimen>
