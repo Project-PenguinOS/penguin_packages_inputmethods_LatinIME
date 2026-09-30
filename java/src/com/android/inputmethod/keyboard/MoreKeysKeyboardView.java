@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import com.android.inputmethod.accessibility.AccessibilityUtils;
 import com.android.inputmethod.accessibility.MoreKeysKeyboardAccessibilityDelegate;
 import com.android.inputmethod.keyboard.internal.KeyDrawParams;
+import com.android.inputmethod.keyboard.internal.PreviewOverlay;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.common.CoordinateUtils;
@@ -130,7 +131,7 @@ public class MoreKeysKeyboardView extends KeyboardView implements MoreKeysPanel 
         final int y = pointY - container.getMeasuredHeight() + container.getPaddingBottom()
                 + getPaddingBottom();
 
-        parentView.getLocationInWindow(mCoordinates);
+        PreviewOverlay.getLocationInCurrentOverlay(parentView, mCoordinates);
         // Ensure the horizontal position of the panel does not extend past the parentView edges.
         final int maxX = parentView.getMeasuredWidth() - container.getMeasuredWidth();
         final int panelX = Math.max(0, Math.min(maxX, x)) + CoordinateUtils.x(mCoordinates);

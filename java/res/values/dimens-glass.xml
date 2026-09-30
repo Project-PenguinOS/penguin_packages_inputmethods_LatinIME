@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="glass_sheet_corner_radius">28dp</dimen>
+    <dimen name="glass_sheet_blur_radius">30dp</dimen>
+    <dimen name="glass_sheet_rim_width">0.7dp</dimen>
+    <dimen name="glass_key_corner_radius">8.5dp</dimen>
+    <dimen name="glass_key_shadow_height">1dp</dimen>
+    <dimen name="glass_bottom_bar_height">52dp</dimen>
+    <dimen name="glass_bottom_bar_icon_size">27dp</dimen>
+    <dimen name="glass_bottom_bar_side_padding">22dp</dimen>
+    <dimen name="glass_suggestions_strip_height">46dp</dimen>
+    <dimen name="glass_suggestion_text_size">17sp</dimen>
+    <dimen name="glass_toolbar_icon_size">22dp</dimen>
+    <dimen name="glass_keyboard_side_padding">3dp</dimen>
+    <dimen name="glass_keyboard_height">232dp</dimen>
+    <dimen name="glass_key_preview_corner_radius">12dp</dimen>
+    <fraction name="glass_key_preview_expansion">27%</fraction>
+    <fraction name="glass_key_preview_text_ratio">72%</fraction>
+    <fraction name="glass_key_letter_ratio">45%</fraction>
+    <fraction name="glass_key_label_ratio">30%</fraction>
+    <fraction name="glass_key_large_letter_ratio">45%</fraction>
+    <fraction name="glass_key_hint_letter_ratio">20%</fraction>
+    <fraction name="glass_key_horizontal_gap">1.39%p</fraction>
+    <fraction name="glass_key_vertical_gap">5.3%p</fraction>
+    <fraction name="glass_keyboard_top_padding">1.2%p</fraction>
+    <fraction name="glass_keyboard_bottom_padding">0.8%p</fraction>
+</resources>

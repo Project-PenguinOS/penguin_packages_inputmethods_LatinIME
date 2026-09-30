@@ -20,12 +20,14 @@ import android.graphics.Typeface;
 
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
+import com.android.inputmethod.latin.utils.Fonts;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class KeyDrawParams {
     @Nonnull
-    public Typeface mTypeface = Typeface.DEFAULT;
+    public Typeface mTypeface = Fonts.regular();
 
     public int mLetterSize;
     public int mLabelSize;

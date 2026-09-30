@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="1dp">
+        <shape>
+            <solid android:color="@color/glass_key_preview_shadow" />
+            <corners android:radius="@dimen/glass_key_preview_corner_radius" />
+        </shape>
+    </item>
+    <item android:bottom="1dp">
+        <shape>
+            <solid android:color="@color/glass_key_preview" />
+            <corners android:radius="@dimen/glass_key_preview_corner_radius" />
+            <padding android:left="4dp" android:right="4dp" android:top="4dp" android:bottom="4dp" />
+        </shape>
+    </item>
+</layer-list>

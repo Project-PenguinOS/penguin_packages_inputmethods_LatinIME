@@ -59,7 +59,7 @@
         >
             <key-style
                 latin:styleName="shiftKeyStyle"
-                latin:keySpec="!icon/shift_key_shifted|!code/key_shift"
+                latin:keySpec="!icon/shift_key_locked|!code/key_shift"
                 latin:backgroundType="stickyOn"
                 latin:parentStyle="baseForShiftKeyStyle" />
         </case>

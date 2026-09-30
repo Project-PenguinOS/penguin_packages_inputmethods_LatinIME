@@ -52,6 +52,60 @@
             android:textSize="16sp"
             style="?attr/suggestionWordStyle" />
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/glass_toolbar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:layoutDirection="ltr"
+        android:visibility="gone">
+        <ImageButton
+            android:id="@+id/glass_toolbar_clipboard"
+            style="@style/GlassToolbarButton"
+            android:contentDescription="@string/glass_toolbar_clipboard"
+            android:src="@drawable/ic_f7_doc_on_clipboard" />
+        <ImageButton
+            android:id="@+id/glass_toolbar_edit"
+            style="@style/GlassToolbarButton"
+            android:contentDescription="@string/glass_toolbar_text_editing"
+            android:src="@drawable/ic_f7_text_cursor" />
+        <ImageButton
+            android:id="@+id/glass_toolbar_one_handed"
+            style="@style/GlassToolbarButton"
+            android:contentDescription="@string/glass_toolbar_one_handed"
+            android:src="@drawable/ic_f7_hand_point_right" />
+        <ImageButton
+            android:id="@+id/glass_toolbar_settings"
+            style="@style/GlassToolbarButton"
+            android:contentDescription="@string/glass_toolbar_settings"
+            android:src="@drawable/ic_f7_gear_alt" />
+        <TextView
+            android:id="@+id/glass_clip_chip"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/glass_chip_background"
+            android:drawableStart="@drawable/ic_glass_chip_paste"
+            android:drawablePadding="6dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="12dp"
+            android:textColor="@color/glass_suggestion_text"
+            android:textSize="15sp"
+            android:visibility="invisible" />
+        <ImageButton
+            android:id="@+id/glass_toolbar_hide"
+            style="@style/GlassToolbarButton"
+            android:contentDescription="@string/glass_toolbar_hide_keyboard"
+            android:src="@drawable/ic_f7_keyboard_chevron_compact_down" />
+    </LinearLayout>
     <ImageButton
         android:id="@+id/suggestions_strip_voice_key"
         android:layout_width="@dimen/config_suggestions_strip_edge_key_width"

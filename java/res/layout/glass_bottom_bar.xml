@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/glass_bottom_bar"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/glass_bottom_bar_height"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/glass_bottom_bar_side_padding"
+    android:paddingEnd="@dimen/glass_bottom_bar_side_padding"
+    android:layoutDirection="ltr"
+    android:hapticFeedbackEnabled="false"
+    android:soundEffectsEnabled="false">
+
+    <ImageButton
+        android:id="@+id/glass_bar_globe"
+        style="@style/GlassBarButton"
+        android:contentDescription="@string/spoken_description_language_switch"
+        android:src="@drawable/ic_f7_globe"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/glass_bar_emoji"
+        style="@style/GlassBarButton"
+        android:contentDescription="@string/spoken_description_emoji"
+        android:src="@drawable/ic_f7_smiley" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/glass_bar_mic"
+        style="@style/GlassBarButton"
+        android:contentDescription="@string/spoken_description_mic"
+        android:src="@drawable/ic_f7_mic" />
+</LinearLayout>

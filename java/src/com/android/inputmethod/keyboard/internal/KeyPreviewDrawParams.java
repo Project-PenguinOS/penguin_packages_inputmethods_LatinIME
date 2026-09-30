@@ -32,6 +32,7 @@ public final class KeyPreviewDrawParams {
     public final int mPreviewOffset;
     public final int mPreviewHeight;
     public final int mPreviewBackgroundResId;
+    public final boolean mBalloon;
     private final int mShowUpAnimatorResId;
     private final int mDismissAnimatorResId;
     private boolean mHasCustomAnimationParams;
@@ -76,6 +77,8 @@ public final class KeyPreviewDrawParams {
                 R.styleable.MainKeyboardView_keyPreviewHeight, 0);
         mPreviewBackgroundResId = mainKeyboardViewAttr.getResourceId(
                 R.styleable.MainKeyboardView_keyPreviewBackground, 0);
+        mBalloon = mainKeyboardViewAttr.getBoolean(
+                R.styleable.MainKeyboardView_keyPreviewBalloon, false);
         mLingerTimeout = mainKeyboardViewAttr.getInt(
                 R.styleable.MainKeyboardView_keyPreviewLingerTimeout, 0);
         mShowUpAnimatorResId = mainKeyboardViewAttr.getResourceId(
@@ -104,6 +107,13 @@ public final class KeyPreviewDrawParams {
         // The distance between the top edge of the parent key and the bottom of the visible part
         // of the key preview background.
         setVisibleOffset(mPreviewOffset - previewTextView.getPaddingBottom());
+    }
+
+    public void setBalloonGeometry(final int headWidth, final int headHeight,
+            final int neckHeight) {
+        mVisibleWidth = headWidth;
+        mVisibleHeight = headHeight;
+        setVisibleOffset(-neckHeight);
     }
 
     public int getVisibleWidth() {

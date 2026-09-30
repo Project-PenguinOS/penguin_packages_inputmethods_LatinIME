@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="@dimen/glass_key_shadow_height">
+        <shape>
+            <solid android:color="@color/glass_key_shadow" />
+            <corners android:radius="@dimen/glass_key_corner_radius" />
+        </shape>
+    </item>
+    <item android:bottom="@dimen/glass_key_shadow_height">
+        <shape>
+            <solid android:color="@color/glass_key_pressed" />
+            <corners android:radius="@dimen/glass_key_corner_radius" />
+        </shape>
+    </item>
+</layer-list>

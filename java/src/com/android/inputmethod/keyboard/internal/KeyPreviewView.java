@@ -81,6 +81,9 @@ public class KeyPreviewView extends TextView {
         if (background == null) {
             return;
         }
+        if (background.getIntrinsicWidth() <= 0) {
+            return;
+        }
         background.getPadding(mBackgroundPadding);
         final int maxWidth = background.getIntrinsicWidth() - mBackgroundPadding.left
                 - mBackgroundPadding.right;

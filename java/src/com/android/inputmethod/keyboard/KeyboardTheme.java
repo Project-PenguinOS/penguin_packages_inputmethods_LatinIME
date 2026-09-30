@@ -42,7 +42,8 @@ public final class KeyboardTheme implements Comparable<KeyboardTheme> {
     public static final int THEME_ID_AUTO_DARK = 5;
     public static final int THEME_ID_YOU = 6;
     public static final int THEME_ID_OLED = 7;
-    public static final int DEFAULT_THEME_ID = THEME_ID_AUTO_DARK;
+    public static final int THEME_ID_GLASS = 8;
+    public static final int DEFAULT_THEME_ID = THEME_ID_GLASS;
 
     private static KeyboardTheme[] AVAILABLE_KEYBOARD_THEMES;
 
@@ -60,6 +61,8 @@ public final class KeyboardTheme implements Comparable<KeyboardTheme> {
                 Build.VERSION_CODES.S_V2),
         new KeyboardTheme(THEME_ID_OLED, "OLED", R.style.KeyboardTheme_OLED,
                 VERSION_CODES.BASE),
+        new KeyboardTheme(THEME_ID_GLASS, "Glass", R.style.KeyboardTheme_Glass,
+                Build.VERSION_CODES.S),
     };
 
     static {
@@ -134,6 +137,10 @@ public final class KeyboardTheme implements Comparable<KeyboardTheme> {
 
     public static void saveKeyboardThemeId(final int themeId, final SharedPreferences prefs) {
         prefs.edit().putString(LXX_KEYBOARD_THEME_KEY, Integer.toString(themeId)).apply();
+    }
+
+    public static boolean isGlass(final Context context) {
+        return getKeyboardTheme(context).mThemeId == THEME_ID_GLASS;
     }
 
     public static KeyboardTheme getKeyboardTheme(final Context context) {

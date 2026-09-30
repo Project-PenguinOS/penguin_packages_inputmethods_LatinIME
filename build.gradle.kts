@@ -72,6 +72,7 @@ android {
             manifest.srcFile(gradleManifest)
             java.directories.run { clear(); add("common/src"); add("java/src") }
             res.directories.run { clear(); add("java/res") }
+            assets.directories.run { clear(); add("java/assets") }
         }
     }
 

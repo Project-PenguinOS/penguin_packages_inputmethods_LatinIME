@@ -121,6 +121,7 @@
         <attr name="keyPreviewOffset" format="dimension" />
         <!-- Height of the key press feedback popup. -->
         <attr name="keyPreviewHeight" format="dimension" />
+        <attr name="keyPreviewBalloon" format="boolean" />
         <!-- TODO: consolidate key preview linger timeout with the key preview animation parameters. -->
         <!-- Delay after key releasing and key press feedback dismissing in millisecond -->
         <attr name="keyPreviewLingerTimeout" format="integer" />
@@ -244,6 +245,7 @@
             <enum name="LXXDark" value="4" />
             <enum name="You" value="6" />
             <enum name="OLED" value="7" />
+            <enum name="Glass" value="8" />
         </attr>
         <!-- Touch position correction -->
         <attr name="touchPositionCorrectionData" format="reference" />
@@ -286,6 +288,7 @@
         <attr name="iconEmojiActionKey" format="reference" />
         <attr name="iconEmojiNormalKey" format="reference" />
         <attr name="iconClipboardPasteKey" format="reference" />
+        <attr name="iconShiftKeyLocked" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="Keyboard_GridRows">

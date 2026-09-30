@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="glass_sheet_tint">#A6DCDEE3</color>
+    <color name="glass_sheet_tint_opaque">#FFD1D4D9</color>
+    <color name="glass_sheet_rim">#80FFFFFF</color>
+    <color name="glass_key">#E6FFFFFF</color>
+    <color name="glass_key_pressed">#B3F2F2F7</color>
+    <color name="glass_key_functional">#E6FFFFFF</color>
+    <color name="glass_key_functional_pressed">#B3F2F2F7</color>
+    <color name="glass_key_action">#FFFFFFFF</color>
+    <color name="glass_key_action_pressed">#B3F2F2F7</color>
+    <color name="glass_key_accent">#FF007AFF</color>
+    <color name="glass_key_accent_pressed">#FF0062CC</color>
+    <color name="glass_key_shadow">#4D000000</color>
+    <color name="glass_key_text">#FF000000</color>
+    <color name="glass_key_hint">#8C3C3C43</color>
+    <color name="glass_icon">#FF000000</color>
+    <color name="glass_key_preview">#FFFFFFFF</color>
+    <color name="glass_key_preview_shadow">#40000000</color>
+    <color name="glass_suggestion_text">#FF1C1C1E</color>
+    <color name="glass_suggestion_secondary">#993C3C43</color>
+    <color name="glass_divider">#26000000</color>
+    <color name="glass_chip">#80FFFFFF</color>
+    <color name="glass_chip_pressed">#33000000</color>
+    <color name="glass_accent">#FF007AFF</color>
+    <color name="glass_gesture_trail">#FF007AFF</color>
+    <color name="glass_panel_item">#CCFFFFFF</color>
+</resources>

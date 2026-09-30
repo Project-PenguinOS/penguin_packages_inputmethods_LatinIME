@@ -38,6 +38,8 @@ android_app {
 
     certificate: "shared",
 
+    asset_dirs: ["assets"],
+
     jni_libs: ["libjni_latinime"],
 
     static_libs: [

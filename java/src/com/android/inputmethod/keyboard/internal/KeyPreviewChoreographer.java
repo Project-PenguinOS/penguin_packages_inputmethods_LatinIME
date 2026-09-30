@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.inputmethod.keyboard.Key;
+import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.common.CoordinateUtils;
 import com.android.inputmethod.latin.utils.ViewLayoutUtils;
 
@@ -106,6 +107,11 @@ public final class KeyPreviewChoreographer {
     private void placeKeyPreview(final Key key, final KeyPreviewView keyPreviewView,
             final KeyboardIconsSet iconsSet, final KeyDrawParams drawParams,
             final int keyboardViewWidth, final int[] originCoords) {
+        if (mParams.mBalloon) {
+            placeBalloonKeyPreview(key, keyPreviewView, iconsSet, drawParams, keyboardViewWidth,
+                    originCoords);
+            return;
+        }
         keyPreviewView.setPreviewVisual(key, iconsSet, drawParams);
         keyPreviewView.measure(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -138,6 +144,53 @@ public final class KeyPreviewChoreographer {
         ViewLayoutUtils.placeViewAt(
                 keyPreviewView, previewX, previewY, previewWidth, previewHeight);
         keyPreviewView.setPivotX(previewWidth / 2.0f);
+        keyPreviewView.setPivotY(previewHeight);
+    }
+
+    private static final float BALLOON_EXPANSION = 0.27f;
+    private static final float BALLOON_HEAD_HEIGHT = 1.08f;
+    private static final float BALLOON_NECK_HEIGHT = 0.26f;
+
+    private void placeBalloonKeyPreview(final Key key, final KeyPreviewView keyPreviewView,
+            final KeyboardIconsSet iconsSet, final KeyDrawParams drawParams,
+            final int keyboardViewWidth, final int[] originCoords) {
+        final Context context = keyPreviewView.getContext();
+        final float density = context.getResources().getDisplayMetrics().density;
+        final int keyWidth = key.getDrawWidth();
+        final int keyHeight = key.getHeight();
+        final int expansion = Math.round(keyWidth * BALLOON_EXPANSION);
+        final int headWidth = keyWidth + expansion * 2;
+        final int headHeight = Math.round(keyHeight * BALLOON_HEAD_HEIGHT);
+        final int neckHeight = Math.round(keyHeight * BALLOON_NECK_HEIGHT);
+        final int previewHeight = headHeight + neckHeight + keyHeight;
+
+        final int keyLeft = key.getDrawX() + CoordinateUtils.x(originCoords);
+        final int minX = CoordinateUtils.x(originCoords);
+        final int maxX = minX + keyboardViewWidth - headWidth;
+        final int previewX = Math.max(minX, Math.min(maxX, keyLeft - expansion));
+        final int previewY = key.getY() + CoordinateUtils.y(originCoords) + keyHeight
+                - previewHeight;
+
+        KeyPreviewBalloonDrawable balloon = keyPreviewView.getBackground()
+                instanceof KeyPreviewBalloonDrawable
+                ? (KeyPreviewBalloonDrawable) keyPreviewView.getBackground() : null;
+        if (balloon == null) {
+            balloon = new KeyPreviewBalloonDrawable(
+                    context.getColor(R.color.glass_key_preview),
+                    context.getColor(R.color.glass_key_preview_shadow),
+                    context.getResources().getDimension(R.dimen.glass_key_preview_corner_radius),
+                    context.getResources().getDimension(R.dimen.glass_key_corner_radius),
+                    3 * density);
+            keyPreviewView.setBackground(balloon);
+        }
+        balloon.setGeometry(keyLeft - previewX, keyWidth, headHeight, neckHeight);
+
+        keyPreviewView.setPreviewVisual(key, iconsSet, drawParams);
+        keyPreviewView.setPadding(0, 0, 0, neckHeight + keyHeight);
+        mParams.setBalloonGeometry(headWidth, headHeight, neckHeight);
+
+        ViewLayoutUtils.placeViewAt(keyPreviewView, previewX, previewY, headWidth, previewHeight);
+        keyPreviewView.setPivotX(keyLeft - previewX + keyWidth / 2.0f);
         keyPreviewView.setPivotY(previewHeight);
     }
 

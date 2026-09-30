@@ -21,6 +21,7 @@ import android.graphics.Typeface;
 import android.util.SparseIntArray;
 
 import com.android.inputmethod.latin.R;
+import com.android.inputmethod.latin.utils.Fonts;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
 import javax.annotation.Nonnull;
@@ -100,7 +101,7 @@ public final class KeyVisualAttributes {
 
     private KeyVisualAttributes(@Nonnull final TypedArray keyAttr) {
         if (keyAttr.hasValue(R.styleable.Keyboard_Key_keyTypeface)) {
-            mTypeface = Typeface.defaultFromStyle(
+            mTypeface = Fonts.fromStyle(
                     keyAttr.getInt(R.styleable.Keyboard_Key_keyTypeface, Typeface.NORMAL));
         } else {
             mTypeface = null;

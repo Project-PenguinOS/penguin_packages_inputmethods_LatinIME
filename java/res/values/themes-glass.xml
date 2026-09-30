@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="InputView.Glass" parent="InputView" />
+
+    <style name="KeyboardTheme.Glass" parent="KeyboardIcons.Glass">
+        <item name="keyIconTint">@color/glass_icon</item>
+        <item name="inputViewStyle">@style/InputView.Glass</item>
+        <item name="keyboardStyle">@style/Keyboard.Glass</item>
+        <item name="keyboardViewStyle">@style/KeyboardView.Glass</item>
+        <item name="mainKeyboardViewStyle">@style/MainKeyboardView.Glass</item>
+        <item name="emojiPalettesViewStyle">@style/EmojiPalettesView.Glass</item>
+        <item name="moreKeysKeyboardStyle">@style/MoreKeysKeyboard.Glass</item>
+        <item name="moreKeysKeyboardViewStyle">@style/MoreKeysKeyboardView.Glass</item>
+        <item name="moreKeysKeyboardViewForActionStyle">@style/MoreKeysKeyboardView.Glass.Action</item>
+        <item name="suggestionStripViewStyle">@style/SuggestionStripView.Glass</item>
+        <item name="suggestionWordStyle">@style/SuggestionWord.Glass</item>
+    </style>
+
+    <style name="Keyboard.Glass" parent="Keyboard">
+        <item name="themeId">Glass</item>
+        <item name="horizontalGap">@fraction/glass_key_horizontal_gap</item>
+        <item name="verticalGap">@fraction/glass_key_vertical_gap</item>
+        <item name="keyboardTopPadding">@fraction/glass_keyboard_top_padding</item>
+        <item name="keyboardBottomPadding">@fraction/glass_keyboard_bottom_padding</item>
+    </style>
+
+    <style name="KeyboardView.Glass" parent="KeyboardView">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="keyBackground">@drawable/btn_keyboard_key_glass</item>
+        <item name="functionalKeyBackground">@drawable/btn_keyboard_key_glass_functional</item>
+        <item name="spacebarBackground">@drawable/btn_keyboard_spacebar_glass</item>
+        <item name="keyTypeface">normal</item>
+        <item name="keyLetterSize">@fraction/glass_key_letter_ratio</item>
+        <item name="keyLabelSize">@fraction/glass_key_label_ratio</item>
+        <item name="keyLargeLetterRatio">@fraction/glass_key_large_letter_ratio</item>
+        <item name="keyHintLetterRatio">@fraction/glass_key_hint_letter_ratio</item>
+        <item name="keyShiftedLetterHintRatio">@fraction/config_key_shifted_letter_hint_ratio_lxx</item>
+        <item name="keyHintLabelRatio">@fraction/config_key_hint_label_ratio_lxx</item>
+        <item name="keyLabelOffCenterRatio">-80%</item>
+        <item name="keyHintLabelOffCenterRatio">300%</item>
+        <item name="keyLabelFlags">alignHintLabelToBottom</item>
+        <item name="spacebarIconWidthRatio">0.9</item>
+        <item name="keyPopupHintLetter"></item>
+        <item name="keyHintLetterPadding">@dimen/config_key_hint_letter_padding_you</item>
+        <item name="keyHintLetterPaddingVertical">@dimen/config_key_hint_letter_padding_vertical_you</item>
+        <item name="keyPreviewTextRatio">@fraction/glass_key_preview_text_ratio</item>
+        <item name="keyTextColor">@color/glass_key_text</item>
+        <item name="keyTextInactivatedColor">@color/glass_key_hint</item>
+        <item name="functionalTextColor">@color/glass_key_text</item>
+        <item name="keyHintLetterColor">@color/glass_key_hint</item>
+        <item name="keyHintLabelColor">@color/glass_key_hint</item>
+        <item name="keyShiftedLetterHintInactivatedColor">@color/glass_key_hint</item>
+        <item name="keyShiftedLetterHintActivatedColor">@color/glass_key_text</item>
+        <item name="keyPreviewTextColor">@color/glass_key_text</item>
+        <item name="gestureFloatingPreviewRoundRadius">@dimen/glass_key_preview_corner_radius</item>
+    </style>
+
+    <style name="MainKeyboardView.Glass" parent="KeyboardView.Glass">
+        <item name="moreKeysKeyboardForActionLayout">@layout/more_keys_keyboard_for_action_lxx</item>
+        <item name="keyPreviewBackground">@drawable/keyboard_key_feedback_glass</item>
+        <item name="keyPreviewBalloon">true</item>
+        <item name="keyPreviewHeight">@dimen/config_key_preview_height_you</item>
+        <item name="keyPreviewOffset">@dimen/config_key_preview_offset_you</item>
+        <item name="keyPreviewShowUpAnimator">@anim/key_preview_show_up_glass</item>
+        <item name="keyPreviewDismissAnimator">@anim/key_preview_dismiss_glass</item>
+        <item name="gestureFloatingPreviewTextColor">@color/glass_key_text</item>
+        <item name="gestureFloatingPreviewColor">@color/glass_key_preview</item>
+        <item name="gestureTrailColor">@color/glass_gesture_trail</item>
+        <item name="slidingKeyInputPreviewColor">@color/glass_chip</item>
+        <item name="languageOnSpacebarTextColor">@color/glass_key_hint</item>
+        <item name="languageOnSpacebarTextShadowRadius">-1.0</item>
+    </style>
+
+    <style name="EmojiPalettesView.Glass" parent="MainKeyboardView.Glass">
+        <item name="categoryIndicatorEnabled">false</item>
+        <item name="categoryPageIndicatorColor">@color/glass_accent</item>
+        <item name="categoryPageIndicatorBackground">@android:color/transparent</item>
+        <item name="iconEmojiRecentsTab">@drawable/ic_f7_clock</item>
+        <item name="iconEmojiCategory1Tab">@drawable/ic_f7_smiley</item>
+        <item name="iconEmojiCategory2Tab">@drawable/ic_f7_lightbulb</item>
+        <item name="iconEmojiCategory3Tab">@drawable/ic_f7_tree</item>
+        <item name="iconEmojiCategory4Tab">@drawable/ic_f7_airplane</item>
+        <item name="iconEmojiCategory5Tab">@drawable/ic_f7_heart</item>
+        <item name="iconEmojiCategory6Tab">@drawable/ic_f7_t_bubble</item>
+        <item name="iconEmojiCategory7Tab">@drawable/ic_f7_flag</item>
+        <item name="iconEmojiCategory8Tab">@drawable/ic_f7_smiley</item>
+        <item name="iconEmojiCategory9Tab">@drawable/ic_f7_paw</item>
+        <item name="iconEmojiCategory10Tab">@drawable/ic_f7_flame</item>
+        <item name="iconEmojiCategory11Tab">@drawable/ic_f7_airplane</item>
+        <item name="iconEmojiCategory12Tab">@drawable/ic_f7_sportscourt</item>
+        <item name="iconEmojiCategory13Tab">@drawable/ic_f7_lightbulb</item>
+        <item name="iconEmojiCategory14Tab">@drawable/ic_f7_heart</item>
+        <item name="iconEmojiCategory15Tab">@drawable/ic_f7_flag</item>
+        <item name="iconEmojiCategory16Tab">@drawable/ic_f7_hand_point_right</item>
+    </style>
+
+    <style name="MoreKeysKeyboard.Glass" parent="Keyboard.Glass">
+        <item name="keyboardTopPadding">0%p</item>
+        <item name="keyboardBottomPadding">0%p</item>
+        <item name="horizontalGap">0%p</item>
+        <item name="touchPositionCorrectionData">@null</item>
+    </style>
+
+    <style name="MoreKeysKeyboardView.Glass" parent="KeyboardView.Glass">
+        <item name="android:background">@drawable/glass_more_keys_background</item>
+        <item name="keyBackground">@drawable/glass_more_keys_key</item>
+        <item name="divider">@null</item>
+        <item name="keyTypeface">normal</item>
+        <item name="verticalCorrection">@dimen/config_more_keys_keyboard_vertical_correction_holo</item>
+    </style>
+
+    <style name="MoreKeysKeyboardView.Glass.Action" parent="MoreKeysKeyboardView.Glass">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="keyBackground">@drawable/btn_keyboard_key_popup_action_glass</item>
+        <item name="keyLabelFlags">keepBackgroundAspectRatio</item>
+    </style>
+
+    <style name="SuggestionStripView.Glass" parent="KeyboardView.Glass">
+        <item name="suggestionsCountInStrip">@integer/config_suggestions_count_in_strip</item>
+        <item name="centerSuggestionPercentile">@fraction/config_center_suggestion_percentile</item>
+        <item name="maxMoreSuggestionsRow">@integer/config_max_more_suggestions_row</item>
+        <item name="minMoreSuggestionsWidth">@fraction/config_min_more_suggestions_width</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:src">@drawable/suggestions_strip_divider_glass</item>
+        <item name="suggestionStripOptions">validTypedWordBold</item>
+        <item name="colorValidTypedWord">@color/glass_suggestion_text</item>
+        <item name="colorTypedWord">@color/glass_suggestion_text</item>
+        <item name="colorAutoCorrect">@color/glass_suggestion_text</item>
+        <item name="colorSuggested">@color/glass_suggestion_text</item>
+        <item name="alphaObsoleted">70%</item>
+    </style>
+
+    <style name="SuggestionWord.Glass" parent="SuggestionWord">
+        <item name="android:background">@drawable/btn_suggestion_glass</item>
+        <item name="android:textColor">@color/glass_suggestion_text</item>
+        <item name="android:textSize">@dimen/glass_suggestion_text_size</item>
+    </style>
+</resources>

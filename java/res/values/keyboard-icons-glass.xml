@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="KeyboardIcons.Glass">
+        <item name="iconShiftKey">@drawable/ic_f7_shift</item>
+        <item name="iconDeleteKey">@drawable/ic_f7_delete_left</item>
+        <item name="iconSettingsKey">@drawable/ic_f7_gear_alt</item>
+        <item name="iconSpaceKey">@null</item>
+        <item name="iconEnterKey">@drawable/ic_f7_arrow_turn_down_left</item>
+        <item name="iconGoKey">@drawable/ic_f7_arrow_right</item>
+        <item name="iconSearchKey">@drawable/ic_f7_search</item>
+        <item name="iconSendKey">@drawable/ic_f7_arrow_up</item>
+        <item name="iconNextKey">@drawable/ic_f7_arrow_right</item>
+        <item name="iconDoneKey">@drawable/ic_f7_checkmark</item>
+        <item name="iconPreviousKey">@drawable/ic_f7_arrow_left</item>
+        <item name="iconTabKey">@drawable/ic_f7_arrow_right_to_line</item>
+        <item name="iconShortcutKey">@drawable/ic_f7_mic</item>
+        <item name="iconSpaceKeyForNumberLayout">@drawable/sym_keyboard_space</item>
+        <item name="iconShiftKeyShifted">@drawable/ic_f7_shift_fill</item>
+        <item name="iconShiftKeyLocked">@drawable/ic_f7_capslock_fill</item>
+        <item name="iconShortcutKeyDisabled">@drawable/sym_keyboard_voice_off</item>
+        <item name="iconLanguageSwitchKey">@drawable/ic_f7_globe</item>
+        <item name="iconZwnjKey">@drawable/sym_keyboard_zwnj_lxx_dark</item>
+        <item name="iconZwjKey">@drawable/sym_keyboard_zwj_lxx_dark</item>
+        <item name="iconEmojiActionKey">@drawable/ic_f7_smiley</item>
+        <item name="iconEmojiNormalKey">@drawable/ic_f7_smiley</item>
+        <item name="iconClipboardPasteKey">@drawable/ic_f7_doc_on_clipboard</item>
+    </style>
+</resources>
