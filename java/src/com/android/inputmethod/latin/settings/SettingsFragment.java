@@ -33,7 +33,6 @@ import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.define.ProductionFlags;
 import com.android.inputmethod.latin.utils.ApplicationUtils;
 import com.android.inputmethod.latin.utils.FeedbackUtils;
-import com.android.inputmethod.latin.utils.JniUtils;
 import com.android.inputmethodcommon.InputMethodSettingsFragment;
 
 public final class SettingsFragment extends InputMethodSettingsFragment {
@@ -59,7 +58,7 @@ public final class SettingsFragment extends InputMethodSettingsFragment {
             final Preference accountsPreference = findPreference(Settings.SCREEN_ACCOUNTS);
             preferenceScreen.removePreference(accountsPreference);
         }
-        if (!JniUtils.sHaveGestureLib) {
+        if (!Settings.readFromBuildConfigIfGestureInputEnabled(getResources())) {
             final Preference gesturePreference = findPreference(Settings.SCREEN_GESTURE);
             preferenceScreen.removePreference(gesturePreference);
         }

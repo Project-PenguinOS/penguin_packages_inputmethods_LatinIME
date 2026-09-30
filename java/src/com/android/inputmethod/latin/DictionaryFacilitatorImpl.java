@@ -642,6 +642,12 @@ public class DictionaryFacilitatorImpl implements DictionaryFacilitator {
         return suggestionResults;
     }
 
+    @Override
+    @Nullable
+    public Dictionary getDictionaryForGesture(final String dictType) {
+        return mDictionaryGroup.getDict(dictType);
+    }
+
     public boolean isValidSpellingWord(final String word) {
         if (mValidSpellingWordReadCache != null) {
             final Boolean cachedValue = mValidSpellingWordReadCache.get(word);

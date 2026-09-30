@@ -59,6 +59,23 @@ public final class DictionaryCollection extends Dictionary {
     }
 
     @Override
+    public boolean iterateWordsForGesture(final WordVisitor visitor) {
+        boolean result = false;
+        for (final Dictionary dictionary : mDictionaries) {
+            result |= dictionary.iterateWordsForGesture(visitor);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean isPossiblyOffensiveWord(final String word) {
+        for (final Dictionary dictionary : mDictionaries) {
+            if (dictionary.isPossiblyOffensiveWord(word)) return true;
+        }
+        return false;
+    }
+
+    @Override
     public ArrayList<SuggestedWordInfo> getSuggestions(final ComposedData composedData,
             final NgramContext ngramContext, final long proximityInfoHandle,
             final SettingsValuesForSuggestion settingsValuesForSuggestion,

@@ -180,6 +180,18 @@ public abstract class Dictionary {
         return false;
     }
 
+    public interface WordVisitor {
+        boolean onWord(String word, int probability);
+    }
+
+    public boolean iterateWordsForGesture(final WordVisitor visitor) {
+        return false;
+    }
+
+    public boolean isPossiblyOffensiveWord(final String word) {
+        return false;
+    }
+
     /**
      * Whether this dictionary is based on data specific to the user, e.g., the user's contacts.
      * @return Whether this dictionary is specific to the user.

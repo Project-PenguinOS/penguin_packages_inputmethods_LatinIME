@@ -273,6 +273,9 @@ public final class BinaryDictionary extends Dictionary {
         if (!isValidDictionary()) {
             return null;
         }
+        if (composedData.mIsBatchMode && !JniUtils.sHaveNativeGestureDecoder) {
+            return null;
+        }
         final DicTraverseSession session = getTraverseSession(sessionId);
         Arrays.fill(session.mInputCodePoints, Constants.NOT_A_CODE);
         ngramContext.outputToArray(session.mPrevWordCodePointArrays,
@@ -441,6 +444,59 @@ public final class BinaryDictionary extends Dictionary {
         final String word = StringUtils.getStringFromNullTerminatedCodePointArray(codePoints);
         return new GetNextWordPropertyResult(
                 getWordProperty(word, isBeginningOfSentence[0]), nextToken);
+    }
+
+    public int iterateWordsChunk(final int token, final int maxCount,
+            final WordVisitor visitor) {
+        if (!isValidDictionary()) {
+            return 0;
+        }
+        final int[] codePoints = new int[DICTIONARY_MAX_WORD_LENGTH];
+        final boolean[] isBeginningOfSentence = new boolean[1];
+        int currentToken = token;
+        for (int i = 0; i < maxCount; ++i) {
+            Arrays.fill(codePoints, 0);
+            isBeginningOfSentence[0] = false;
+            final int nextToken = getNextWordNative(mNativeDict, currentToken, codePoints,
+                    isBeginningOfSentence);
+            int length = 0;
+            while (length < codePoints.length && codePoints[length] != 0) {
+                ++length;
+            }
+            if (length > 0 && !isBeginningOfSentence[0]) {
+                final int[] wordCodePoints = Arrays.copyOf(codePoints, length);
+                final int probability = getProbabilityNative(mNativeDict, wordCodePoints);
+                if (probability != NOT_A_PROBABILITY) {
+                    final String word = new String(wordCodePoints, 0, length);
+                    if (!visitor.onWord(word, probability)) {
+                        return -1;
+                    }
+                }
+            }
+            if (nextToken == 0) {
+                return 0;
+            }
+            currentToken = nextToken;
+        }
+        return currentToken;
+    }
+
+    @Override
+    public boolean iterateWordsForGesture(final WordVisitor visitor) {
+        int token = 0;
+        do {
+            token = iterateWordsChunk(token, Integer.MAX_VALUE, visitor);
+        } while (token > 0);
+        return token == 0;
+    }
+
+    @Override
+    public boolean isPossiblyOffensiveWord(final String word) {
+        if (!isValidDictionary() || TextUtils.isEmpty(word)) {
+            return false;
+        }
+        final WordProperty wordProperty = getWordProperty(word, false);
+        return wordProperty != null && wordProperty.mIsPossiblyOffensive;
     }
 
     // Add a unigram entry to binary dictionary with unigram attributes in native code.

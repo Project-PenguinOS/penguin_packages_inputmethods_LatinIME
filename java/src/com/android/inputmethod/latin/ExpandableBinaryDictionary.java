@@ -486,6 +486,32 @@ abstract public class ExpandableBinaryDictionary extends Dictionary {
         return false;
     }
 
+    private static final int MAX_WORDS_FOR_GESTURE_ITERATION = 20000;
+
+    @Override
+    public boolean iterateWordsForGesture(final WordVisitor visitor) {
+        reloadDictionaryIfRequired();
+        boolean lockAcquired = false;
+        try {
+            lockAcquired = mLock.readLock().tryLock(
+                    TIMEOUT_FOR_READ_OPS_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
+            if (lockAcquired) {
+                if (mBinaryDictionary == null || !mBinaryDictionary.isValidDictionary()) {
+                    return false;
+                }
+                return mBinaryDictionary.iterateWordsChunk(0,
+                        MAX_WORDS_FOR_GESTURE_ITERATION, visitor) >= 0;
+            }
+        } catch (final InterruptedException e) {
+            Log.e(TAG, "Interrupted tryLock() in iterateWordsForGesture().", e);
+        } finally {
+            if (lockAcquired) {
+                mLock.readLock().unlock();
+            }
+        }
+        return false;
+    }
+
     protected boolean isInDictionaryLocked(final String word) {
         if (mBinaryDictionary == null) return false;
         return mBinaryDictionary.isInDictionary(word);

@@ -38,6 +38,7 @@ import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.common.CoordinateUtils;
 import com.android.inputmethod.latin.common.InputPointers;
 import com.android.inputmethod.latin.define.DebugFlags;
+import com.android.inputmethod.latin.gesture.GestureDecoder;
 import com.android.inputmethod.latin.settings.Settings;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
@@ -227,6 +228,8 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
             tracker.setKeyDetectorInner(keyDetector);
         }
         sGestureEnabler.setPasswordMode(keyboard.mId.passwordInput());
+        GestureDecoder.setInputCoordinateCorrection(
+                keyDetector.getTouchX(0), keyDetector.getTouchY(0));
     }
 
     public static void setReleasedKeyGraphicsToAllKeys() {

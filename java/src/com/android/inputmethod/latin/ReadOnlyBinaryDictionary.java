@@ -115,6 +115,40 @@ public final class ReadOnlyBinaryDictionary extends Dictionary {
         return NOT_A_PROBABILITY;
     }
 
+    private static final int WORD_ITERATION_CHUNK_SIZE = 4000;
+
+    @Override
+    public boolean iterateWordsForGesture(final WordVisitor visitor) {
+        int token = 0;
+        do {
+            if (!mLock.readLock().tryLock()) {
+                return false;
+            }
+            try {
+                if (!mBinaryDictionary.isValidDictionary()) {
+                    return false;
+                }
+                token = mBinaryDictionary.iterateWordsChunk(token, WORD_ITERATION_CHUNK_SIZE,
+                        visitor);
+            } finally {
+                mLock.readLock().unlock();
+            }
+        } while (token > 0);
+        return token == 0;
+    }
+
+    @Override
+    public boolean isPossiblyOffensiveWord(final String word) {
+        if (mLock.readLock().tryLock()) {
+            try {
+                return mBinaryDictionary.isPossiblyOffensiveWord(word);
+            } finally {
+                mLock.readLock().unlock();
+            }
+        }
+        return false;
+    }
+
     @Override
     public void close() {
         mLock.writeLock().lock();

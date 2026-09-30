@@ -505,6 +505,7 @@ public final class InputLogic {
     public void onStartBatchInput(final SettingsValues settingsValues,
             final KeyboardSwitcher keyboardSwitcher, final LatinIME.UIHandler handler) {
         mWordBeingCorrectedByCursor = null;
+        mSuggest.prepareGestureDecoder(keyboardSwitcher.getKeyboard());
         mInputLogicHandler.onStartBatchInput();
         handler.showGesturePreviewAndSuggestionStrip(
                 SuggestedWords.getEmptyInstance(), false /* dismissGestureFloatingPreviewText */);

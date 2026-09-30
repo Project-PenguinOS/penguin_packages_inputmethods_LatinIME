@@ -162,6 +162,8 @@ public interface DictionaryFacilitator {
             final SettingsValuesForSuggestion settingsValuesForSuggestion, final int sessionId,
             final int inputStyle);
 
+    @Nullable Dictionary getDictionaryForGesture(final String dictType);
+
     boolean isValidSpellingWord(final String word);
 
     boolean isValidSuggestionWord(final String word);

@@ -712,6 +712,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         if (mainKeyboardView != null) {
             mainKeyboardView.setMainDictionaryAvailability(isMainDictionaryAvailable);
         }
+        if (isMainDictionaryAvailable) {
+            mInputLogic.mSuggest.prepareGestureDecoder(mKeyboardSwitcher.getKeyboard());
+        }
         if (mHandler.hasPendingWaitForDictionaryLoad()) {
             mHandler.cancelWaitForDictionaryLoad();
             mHandler.postResumeSuggestions(false /* shouldDelay */);

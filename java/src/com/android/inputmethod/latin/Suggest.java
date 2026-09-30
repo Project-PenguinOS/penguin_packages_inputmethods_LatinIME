@@ -23,9 +23,11 @@ import static com.android.inputmethod.latin.define.DecoderSpecificConstants.SHOU
 
 import com.android.inputmethod.keyboard.Keyboard;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
+import com.android.inputmethod.latin.common.ComposedData;
 import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.common.StringUtils;
 import com.android.inputmethod.latin.define.DebugFlags;
+import com.android.inputmethod.latin.gesture.GestureDecoder;
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion;
 import com.android.inputmethod.latin.utils.AutoCorrectionUtils;
 import com.android.inputmethod.latin.utils.BinaryDictionaryUtils;
@@ -36,6 +38,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class loads a dictionary and provides a list of suggestions for a given sequence of
@@ -55,6 +58,7 @@ public final class Suggest {
 
     private static final boolean DBG = DebugFlags.DEBUG_ENABLED;
     private final DictionaryFacilitator mDictionaryFacilitator;
+    private final GestureDecoder mGestureDecoder = new GestureDecoder();
 
     private static final int MAXIMUM_AUTO_CORRECT_LENGTH_FOR_GERMAN = 12;
     private static final HashMap<String, Integer> sLanguageToMaximumAutoCorrectionWithSpaceLength =
@@ -71,6 +75,10 @@ public final class Suggest {
 
     public Suggest(final DictionaryFacilitator dictionaryFacilitator) {
         mDictionaryFacilitator = dictionaryFacilitator;
+    }
+
+    public void prepareGestureDecoder(@Nullable final Keyboard keyboard) {
+        mGestureDecoder.prepare(mDictionaryFacilitator, keyboard);
     }
 
     /**
@@ -291,9 +299,25 @@ public final class Suggest {
             final SettingsValuesForSuggestion settingsValuesForSuggestion,
             final int inputStyle, final int sequenceNumber,
             final OnGetSuggestedWordsCallback callback) {
-        final SuggestionResults suggestionResults = mDictionaryFacilitator.getSuggestionResults(
-                wordComposer.getComposedDataSnapshot(), ngramContext, keyboard,
+        final ComposedData composedData = wordComposer.getComposedDataSnapshot();
+        SuggestionResults suggestionResults = mDictionaryFacilitator.getSuggestionResults(
+                composedData, ngramContext, keyboard,
                 settingsValuesForSuggestion, SESSION_ID_GESTURE, inputStyle);
+        if (suggestionResults.isEmpty()) {
+            final ArrayList<SuggestedWordInfo> gestureSuggestions =
+                    mGestureDecoder.getSuggestions(composedData.mInputPointers, keyboard,
+                            mDictionaryFacilitator,
+                            settingsValuesForSuggestion.mBlockPotentiallyOffensive,
+                            inputStyle == SuggestedWords.INPUT_STYLE_TAIL_BATCH,
+                            SuggestedWords.MAX_SUGGESTIONS);
+            suggestionResults = new SuggestionResults(SuggestedWords.MAX_SUGGESTIONS,
+                    ngramContext.isBeginningOfSentenceContext(),
+                    false);
+            suggestionResults.addAll(gestureSuggestions);
+            if (null != suggestionResults.mRawSuggestions) {
+                suggestionResults.mRawSuggestions.addAll(gestureSuggestions);
+            }
+        }
         // For transforming words that don't come from a dictionary, because it's our best bet
         final Locale locale = mDictionaryFacilitator.getLocale();
         final ArrayList<SuggestedWordInfo> suggestionsContainer =

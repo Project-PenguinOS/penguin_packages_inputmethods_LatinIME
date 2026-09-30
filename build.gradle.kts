@@ -74,6 +74,9 @@ android {
             res.directories.run { clear(); add("java/res") }
             assets.directories.run { clear(); add("java/assets") }
         }
+        getByName("test") {
+            java.directories.run { clear(); add("tests/jvm") }
+        }
     }
 
     externalNativeBuild {
@@ -119,4 +122,6 @@ dependencies {
     implementation("androidx.preference:preference:1.2.1")
     implementation("androidx.dynamicanimation:dynamicanimation:1.1.0")
     implementation("com.google.android.material:material:1.14.0")
+
+    testImplementation("junit:junit:4.13.2")
 }
