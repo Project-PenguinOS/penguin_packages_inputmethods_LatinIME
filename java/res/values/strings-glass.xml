@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="glass_toolbar_more">Show tools</string>
+    <string name="glass_back_to_keyboard">Back to keyboard</string>
     <string name="glass_toolbar_clipboard">Clipboard</string>
     <string name="glass_toolbar_text_editing">Text editing</string>
     <string name="glass_toolbar_one_handed">One-handed mode</string>
@@ -35,10 +37,6 @@
     <string name="glass_settings_clipboard_history">Clipboard history</string>
     <string name="glass_settings_clipboard_history_summary">Keep recently copied text for one hour; pinned items are kept</string>
     <string name="glass_settings_clipboard_suggestion">Suggest recently copied text</string>
-    <string name="glass_settings_space_cursor">Space bar cursor control</string>
-    <string name="glass_settings_space_cursor_summary">Slide on the space bar to move the cursor</string>
-    <string name="glass_settings_delete_swipe">Swipe to delete words</string>
-    <string name="glass_settings_delete_swipe_summary">Slide left from the delete key to select and delete words</string>
     <string name="glass_settings_toolbar">Show toolbar</string>
     <string name="glass_settings_toolbar_summary">Clipboard, text editing and more above the keys when there are no suggestions</string>
 </resources>

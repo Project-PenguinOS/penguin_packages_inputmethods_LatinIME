@@ -920,28 +920,28 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
         final Key oldKey = mCurrentKey;
         final Key newKey = onMoveKey(x, y);
 
-        // Cursor space bar slider
         if (oldKey != null && oldKey.getCode() == Constants.CODE_SPACE
                 && Settings.getInstance().getCurrent().mSpaceTrackpadEnabled) {
-            int steps = (x - mStartX) / sPointerStep;
-            if (steps != 0
-                    && mStartTime + Settings.getInstance().getCurrent().mKeyLongpressTimeout
-                        < System.currentTimeMillis()) {
+            if (!mSlidOnSpaceBar && shouldStartSlider(x, y, sPointerStep)) {
                 mSlidOnSpaceBar = true;
+                sTimerProxy.cancelKeyTimersOf(this);
+            }
+            final int steps = (x - mStartX) / sPointerStep;
+            if (mSlidOnSpaceBar && steps != 0) {
                 mStartX += steps * sPointerStep;
                 sListener.onMovePointer(steps);
             }
             return;
         }
 
-        // Backspace slider
         if (oldKey != null && oldKey.getCode() == Constants.CODE_DELETE
                 && Settings.getInstance().getCurrent().mBackspaceTrackpadEnabled) {
-            int steps = (x - mStartX) / sPointerWordStep;
-            if (steps != 0
-                    && mStartTime + Settings.getInstance().getCurrent().mKeyLongpressTimeout
-                    < System.currentTimeMillis()) {
+            if (!mSlidOnBackspace && shouldStartSlider(x, y, sPointerWordStep)) {
                 mSlidOnBackspace = true;
+                sTimerProxy.cancelKeyTimersOf(this);
+            }
+            final int steps = (x - mStartX) / sPointerWordStep;
+            if (mSlidOnBackspace && steps != 0) {
                 mStartX += steps * sPointerWordStep;
                 sListener.onBackspaceSlide(steps);
             }
@@ -974,6 +974,16 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
         if (mIsInSlidingKeyInput) {
             sDrawingProxy.showSlidingKeyInputPreview(this);
         }
+    }
+
+    private boolean shouldStartSlider(final int x, final int y, final int step) {
+        final int dx = Math.abs(x - mStartX);
+        final int dy = Math.abs(y - mStartY);
+        if (dx >= step * 2 && dx > dy * 2) {
+            return true;
+        }
+        return dx >= step && mStartTime + Settings.getInstance().getCurrent().mKeyLongpressTimeout
+                < System.currentTimeMillis();
     }
 
     private void onUpEvent(final int x, final int y, final long eventTime) {

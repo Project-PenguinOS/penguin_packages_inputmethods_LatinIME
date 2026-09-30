@@ -58,8 +58,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:paddingStart="6dp"
-        android:paddingEnd="6dp"
+        android:paddingStart="48dp"
+        android:paddingEnd="4dp"
         android:layoutDirection="ltr"
         android:visibility="gone">
         <ImageButton
@@ -106,6 +106,23 @@
             android:contentDescription="@string/glass_toolbar_hide_keyboard"
             android:src="@drawable/ic_f7_keyboard_chevron_compact_down" />
     </LinearLayout>
+    <TextView
+        android:id="@+id/glass_dictation_status"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/glass_dictation_listening"
+        android:textColor="@color/glass_suggestion_secondary"
+        android:textSize="16sp"
+        android:visibility="gone" />
+    <ImageButton
+        android:id="@+id/glass_strip_grid"
+        style="@style/GlassToolbarButton"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        android:contentDescription="@string/glass_toolbar_more"
+        android:src="@drawable/ic_f7_square_grid_2x2" />
     <ImageButton
         android:id="@+id/suggestions_strip_voice_key"
         android:layout_width="@dimen/config_suggestions_strip_edge_key_width"

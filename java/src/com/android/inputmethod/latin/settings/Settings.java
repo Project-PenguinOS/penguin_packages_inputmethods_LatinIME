@@ -109,8 +109,6 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
     public static final String PREF_SHOW_TOOLBAR = "pref_show_toolbar";
     public static final String PREF_CLIPBOARD_HISTORY = "pref_clipboard_history";
     public static final String PREF_CLIPBOARD_SUGGESTION = "pref_clipboard_suggestion";
-    public static final String PREF_SPACE_CURSOR = "pref_space_cursor";
-    public static final String PREF_DELETE_SWIPE = "pref_delete_swipe";
     public static final String PREF_ONE_HANDED_MODE = "pref_one_handed_mode";
     public static final int ONE_HANDED_OFF = 0;
     public static final int ONE_HANDED_LEFT = 1;

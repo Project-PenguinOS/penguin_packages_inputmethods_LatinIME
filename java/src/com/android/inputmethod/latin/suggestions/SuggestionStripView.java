@@ -73,7 +73,11 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
     private final View mImportantNoticeStrip;
     private final View mToolbar;
     private final TextView mClipChip;
+    private final ImageButton mGridButton;
+    private final TextView mDictationStatus;
+    private boolean mDictating;
     private boolean mToolbarEnabled = true;
+    private boolean mToolbarForced;
     private CharSequence mClipChipText;
     MainKeyboardView mMainKeyboardView;
 
@@ -162,6 +166,15 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
                 R.id.glass_toolbar_hide, R.id.glass_clip_chip }) {
             findViewById(id).setOnClickListener(toolbarClick);
         }
+        mDictationStatus = (TextView)findViewById(R.id.glass_dictation_status);
+        mDictationStatus.setTypeface(Fonts.regular());
+        mGridButton = (ImageButton)findViewById(R.id.glass_strip_grid);
+        mGridButton.setOnClickListener(v -> {
+            AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                    Constants.CODE_UNSPECIFIED, v);
+            mToolbarForced = !mToolbarForced;
+            updateToolbarVisibility();
+        });
         mStripVisibilityGroup = new StripVisibilityGroup(this, mSuggestionsStrip,
                 mImportantNoticeStrip);
 
@@ -221,10 +234,25 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
     }
 
     private void updateToolbarVisibility() {
-        final boolean showToolbar = mToolbarEnabled && mSuggestedWords.isEmpty()
+        final boolean noSuggestions = mSuggestedWords.isEmpty();
+        if (noSuggestions) {
+            mToolbarForced = false;
+        }
+        final boolean showToolbar = mToolbarEnabled
+                && (noSuggestions || mToolbarForced)
                 && !mStripVisibilityGroup.isShowingImportantNoticeStrip();
-        mToolbar.setVisibility(showToolbar ? VISIBLE : GONE);
-        mSuggestionsStrip.setVisibility(showToolbar ? INVISIBLE : VISIBLE);
+        mToolbar.setVisibility(showToolbar && !mDictating ? VISIBLE : GONE);
+        mSuggestionsStrip.setVisibility(showToolbar || mDictating ? INVISIBLE : VISIBLE);
+        mDictationStatus.setVisibility(mDictating ? VISIBLE : GONE);
+        mGridButton.setVisibility(mToolbarEnabled && !mDictating ? VISIBLE : GONE);
+        mGridButton.setActivated(mToolbarForced);
+        mGridButton.setImageResource(mToolbarForced
+                ? R.drawable.ic_f7_square_grid_2x2_fill : R.drawable.ic_f7_square_grid_2x2);
+    }
+
+    public void setDictating(final boolean dictating) {
+        mDictating = dictating;
+        updateToolbarVisibility();
     }
 
     public void setClipChip(final CharSequence text) {

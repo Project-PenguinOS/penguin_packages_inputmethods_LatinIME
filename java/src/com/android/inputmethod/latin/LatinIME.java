@@ -38,6 +38,9 @@ import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
 import android.media.AudioManager;
 import android.os.Build;
+import android.view.inputmethod.InputConnection;
+import android.view.KeyCharacterMap;
+import android.os.SystemClock;
 import android.os.Debug;
 import android.os.IBinder;
 import android.os.Message;
@@ -84,7 +87,11 @@ import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.common.CoordinateUtils;
 import com.android.inputmethod.latin.common.InputPointers;
 import com.android.inputmethod.latin.define.DebugFlags;
+import com.android.inputmethod.latin.glass.ClipboardHistory;
+import com.android.inputmethod.latin.glass.Dictation;
+import com.android.inputmethod.latin.glass.GlassPanels;
 import com.android.inputmethod.latin.glass.GlassWindow;
+import com.android.inputmethod.latin.glass.PanelHost;
 import com.android.inputmethod.latin.define.ProductionFlags;
 import com.android.inputmethod.latin.inputlogic.InputLogic;
 import com.android.inputmethod.latin.permissions.PermissionsManager;
@@ -168,6 +175,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     // TODO: Move these {@link View}s to {@link KeyboardSwitcher}.
     private View mInputView;
     private GlassWindow mGlassWindow;
+    private ClipboardHistory mClipboardHistory;
+    private GlassPanels mGlassPanels;
+    private Dictation mDictation;
+    private final ClipboardHistory.Listener mClipboardListener = () -> updateClipChip();
     private final int[] mTmpLocation = new int[2];
     private InsetsUpdater mInsetsUpdater;
     private SuggestionStripView mSuggestionStripView;
@@ -624,6 +635,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         super.onCreate();
         mGlassWindow = new GlassWindow(this, getWindow().getWindow());
         updateGlassWindow();
+        mClipboardHistory = new ClipboardHistory(this);
+        mClipboardHistory.addListener(mClipboardListener);
+        mGlassPanels = new GlassPanels(mPanelHost, mClipboardHistory, this::setOneHandedMode);
 
         mHandler.onCreate();
 
@@ -685,6 +699,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mSettings.loadSettings(this, locale, inputAttributes);
         final SettingsValues currentSettingsValues = mSettings.getCurrent();
         AudioAndHapticFeedbackManager.getInstance().onSettingsChanged(currentSettingsValues);
+        if (mClipboardHistory != null) {
+            mClipboardHistory.setEnabled(currentSettingsValues.mClipboardHistoryEnabled);
+        }
         // This method is called on startup and language switch, before the new layout has
         // been displayed. Opening dictionaries never affects responsivity as dictionaries are
         // asynchronously loaded.
@@ -800,13 +817,201 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             requestHideSelf(0);
         } else if (viewId == R.id.glass_toolbar_settings) {
             launchSettings(SettingsActivity.EXTRA_ENTRY_VALUE_LONG_PRESS_COMMA);
+        } else if (viewId == R.id.glass_toolbar_clipboard) {
+            mGlassPanels.togglePanel(GlassPanels.PANEL_CLIPBOARD);
+        } else if (viewId == R.id.glass_toolbar_edit) {
+            mGlassPanels.togglePanel(GlassPanels.PANEL_TEXT_EDIT);
+        } else if (viewId == R.id.glass_toolbar_one_handed) {
+            final int mode = mSettings.getCurrent().mOneHandedMode;
+            setOneHandedMode(mode == Settings.ONE_HANDED_OFF
+                    ? Settings.ONE_HANDED_RIGHT : Settings.ONE_HANDED_OFF);
+        } else if (viewId == R.id.glass_clip_chip) {
+            final String text = mClipboardHistory.getRecentSuggestion();
+            mClipboardHistory.consumeSuggestion();
+            if (text != null) {
+                onTextInput(text);
+            }
+            updateClipChip();
         }
     }
+
+    private void setUpBottomBar(final View inputView) {
+        final View emoji = inputView.findViewById(R.id.glass_bar_emoji);
+        final View mic = inputView.findViewById(R.id.glass_bar_mic);
+        final View globe = inputView.findViewById(R.id.glass_bar_globe);
+        if (emoji == null) return;
+        emoji.setOnClickListener(v -> {
+            AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                    Constants.CODE_UNSPECIFIED, v);
+            mGlassPanels.hidePanel();
+            onCodeInput(Constants.CODE_EMOJI, Constants.NOT_A_COORDINATE,
+                    Constants.NOT_A_COORDINATE, false);
+        });
+        mic.setOnClickListener(v -> {
+            AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                    Constants.CODE_UNSPECIFIED, v);
+            onDictationRequested();
+        });
+        globe.setOnClickListener(v -> {
+            AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                    Constants.CODE_UNSPECIFIED, v);
+            onCodeInput(Constants.CODE_LANGUAGE_SWITCH, Constants.NOT_A_COORDINATE,
+                    Constants.NOT_A_COORDINATE, false);
+        });
+        globe.setOnLongClickListener(v -> {
+            mRichImm.getInputMethodManager().showInputMethodPicker();
+            return true;
+        });
+    }
+
+    private void updateBottomBar() {
+        if (mInputView == null) return;
+        final View globe = mInputView.findViewById(R.id.glass_bar_globe);
+        final View mic = mInputView.findViewById(R.id.glass_bar_mic);
+        if (globe != null) {
+            globe.setVisibility(shouldShowLanguageSwitchKey() ? View.VISIBLE : View.GONE);
+        }
+        if (mic != null) {
+            mic.setVisibility(mSettings.getCurrent().mShowsVoiceInputKey
+                    ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
+    void onDictationRequested() {
+        if (mDictation == null) {
+            mDictation = new Dictation(this, this::getCurrentInputConnection,
+                    () -> mRichImm.getCurrentSubtypeLocale(), mDictationCallback);
+        }
+        mDictation.toggle();
+    }
+
+    private final Dictation.Callback mDictationCallback = new Dictation.Callback() {
+        @Override
+        public void onDictationStateChanged(final boolean listening) {
+            if (mInputView == null) return;
+            final View mic = mInputView.findViewById(R.id.glass_bar_mic);
+            if (mic != null) {
+                mic.setActivated(listening);
+                mic.setContentDescription(getString(listening
+                        ? R.string.glass_dictation_stop : R.string.spoken_description_mic));
+                if (!listening) {
+                    mic.animate().scaleX(1f).scaleY(1f).setDuration(150).start();
+                }
+            }
+            if (hasSuggestionStripView()) {
+                mSuggestionStripView.setDictating(listening);
+            }
+        }
+
+        @Override
+        public void onDictationLevel(final float level) {
+            if (mInputView == null) return;
+            final View mic = mInputView.findViewById(R.id.glass_bar_mic);
+            if (mic != null) {
+                final float scale = 1f + 0.18f * level;
+                mic.animate().scaleX(scale).scaleY(scale).setDuration(80).start();
+            }
+        }
+
+        @Override
+        public void onDictationUnavailable() {
+            onCodeInput(Constants.CODE_SHORTCUT, Constants.NOT_A_COORDINATE,
+                    Constants.NOT_A_COORDINATE, false);
+        }
+    };
+
+    private void updateClipChip() {
+        if (!hasSuggestionStripView() || mClipboardHistory == null) return;
+        final SettingsValues settings = mSettings.getCurrent();
+        final String recent = settings.mClipboardSuggestionEnabled && !settings.mInputAttributes
+                .mIsPasswordField ? mClipboardHistory.getRecentSuggestion() : null;
+        mSuggestionStripView.setClipChip(recent);
+    }
+
+    private boolean isOneHandedAvailable() {
+        return getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    void setOneHandedMode(final int mode) {
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putInt(Settings.PREF_ONE_HANDED_MODE, mode).apply();
+        loadSettings();
+        if (mGlassPanels != null) {
+            mGlassPanels.hidePanel();
+        }
+        if (mDictation != null) {
+            mDictation.cancel();
+        }
+        final EditorInfo editorInfo = getCurrentInputEditorInfo();
+        if (editorInfo != null) {
+            mKeyboardSwitcher.loadKeyboard(editorInfo, mSettings.getCurrent(),
+                    getCurrentAutoCapsState(), getCurrentRecapitalizeState());
+        }
+        if (mGlassPanels != null) {
+            mGlassPanels.applyOneHandedMode(isOneHandedAvailable() ? mode
+                    : Settings.ONE_HANDED_OFF);
+        }
+    }
+
+    private final PanelHost mPanelHost = new PanelHost() {
+        @Override
+        public void commitText(final String text) {
+            onTextInput(text);
+        }
+
+        @Override
+        public void sendKey(final int keyCode, final boolean shift) {
+            final InputConnection ic = getCurrentInputConnection();
+            if (ic == null) return;
+            ic.finishComposingText();
+            final long now = SystemClock.uptimeMillis();
+            final int meta = shift ? (KeyEvent.META_SHIFT_ON | KeyEvent.META_SHIFT_LEFT_ON) : 0;
+            ic.sendKeyEvent(new KeyEvent(now, now, KeyEvent.ACTION_DOWN, keyCode, 0, meta,
+                    KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                    KeyEvent.FLAG_SOFT_KEYBOARD | KeyEvent.FLAG_KEEP_TOUCH_MODE));
+            ic.sendKeyEvent(new KeyEvent(now, SystemClock.uptimeMillis(), KeyEvent.ACTION_UP,
+                    keyCode, 0, meta, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                    KeyEvent.FLAG_SOFT_KEYBOARD | KeyEvent.FLAG_KEEP_TOUCH_MODE));
+        }
+
+        @Override
+        public void performContextMenuAction(final int id) {
+            final InputConnection ic = getCurrentInputConnection();
+            if (ic == null) return;
+            ic.finishComposingText();
+            ic.performContextMenuAction(id);
+        }
+
+        @Override
+        public void performFeedback(final View view) {
+            AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                    Constants.CODE_UNSPECIFIED, view);
+        }
+
+        @Override
+        public void closePanel() {
+            mGlassPanels.hidePanel();
+        }
+
+        @Override
+        public void enableClipboardHistory() {
+            PreferenceManager.getDefaultSharedPreferences(LatinIME.this).edit()
+                    .putBoolean(Settings.PREF_CLIPBOARD_HISTORY, true).apply();
+            loadSettings();
+        }
+    };
 
     @Override
     public void onDestroy() {
         if (mGlassWindow != null) {
             mGlassWindow.release();
+        }
+        if (mClipboardHistory != null) {
+            mClipboardHistory.setEnabled(false);
+        }
+        if (mDictation != null) {
+            mDictation.destroy();
         }
         mDictionaryFacilitator.closeDictionaries();
         mSettings.onDestroy();
@@ -913,6 +1118,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mSuggestionStripView = (SuggestionStripView)view.findViewById(R.id.suggestion_strip_view);
         if (hasSuggestionStripView()) {
             mSuggestionStripView.setListener(this, view);
+        }
+        setUpBottomBar(view);
+        if (mGlassPanels != null) {
+            mGlassPanels.attach(view);
         }
     }
 
@@ -1142,6 +1351,13 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                 currentSettingsValues.mGestureTrailEnabled,
                 currentSettingsValues.mGestureFloatingPreviewTextEnabled);
 
+        updateClipChip();
+        updateBottomBar();
+        if (mGlassPanels != null) {
+            mGlassPanels.applyOneHandedMode(isOneHandedAvailable()
+                    ? currentSettingsValues.mOneHandedMode : Settings.ONE_HANDED_OFF);
+        }
+
         if (TRACE) Debug.startMethodTracing("/data/trace/latinime");
     }
 
@@ -1178,6 +1394,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     void onFinishInputViewInternal(final boolean finishingInput) {
         super.onFinishInputView(finishingInput);
+        if (mGlassPanels != null) {
+            mGlassPanels.hidePanel();
+        }
         cleanupInternalStateForFinishInput();
     }
 
