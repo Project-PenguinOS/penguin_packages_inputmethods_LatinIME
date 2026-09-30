@@ -26,4 +26,14 @@
     <color name="glass_accent">#FF007AFF</color>
     <color name="glass_gesture_trail">#FF007AFF</color>
     <color name="glass_panel_item">#CCFFFFFF</color>
+    <color name="ios_grouped_background">#FFF2F2F7</color>
+    <color name="ios_cell">#FFFFFFFF</color>
+    <color name="ios_cell_pressed">#FFD1D1D6</color>
+    <color name="ios_separator">#4A3C3C43</color>
+    <color name="ios_label">#FF000000</color>
+    <color name="ios_secondary_label">#993C3C43</color>
+    <color name="ios_section_header">#993C3C43</color>
+    <color name="ios_switch_on">#FF34C759</color>
+    <color name="ios_switch_off">#29787880</color>
+    <color name="ios_switch_thumb">#FFFFFFFF</color>
 </resources>

@@ -17,9 +17,14 @@
 package com.android.inputmethod.latin.settings;
 
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 import android.view.View;
 import android.widget.ListView;
+
+import com.android.inputmethod.latin.R;
 
 /**
  * A base abstract class for a {@link PreferenceFragment} that removes divider lines
@@ -33,5 +38,31 @@ public abstract class CustomPreferenceFragment extends PreferenceFragment {
         View rootView = getView();
         ListView list = (ListView) rootView.findViewById(android.R.id.list);
         list.setDivider(null);
+        applyIosLayouts(getPreferenceScreen());
+        list.post(() -> IosGroupedAdapter.install(list));
+    }
+
+    static void applyIosLayouts(final PreferenceGroup group) {
+        if (group == null) return;
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            final Preference preference = group.getPreference(i);
+            if (preference instanceof PreferenceCategory) {
+                preference.setLayoutResource(R.layout.ios_preference_category);
+                applyIosLayouts((PreferenceGroup) preference);
+            } else {
+                preference.setLayoutResource(R.layout.ios_preference);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        final View rootView = getView();
+        if (rootView == null) return;
+        final ListView list = (ListView) rootView.findViewById(android.R.id.list);
+        if (list != null) {
+            list.post(() -> IosGroupedAdapter.install(list));
+        }
     }
 }

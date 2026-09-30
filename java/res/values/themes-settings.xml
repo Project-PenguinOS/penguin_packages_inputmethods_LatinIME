@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="PenguinSettings" parent="@android:style/Theme.DeviceDefault.DayNight">
+        <item name="android:windowBackground">@color/ios_grouped_background</item>
+        <item name="android:colorBackground">@color/ios_grouped_background</item>
+        <item name="android:colorPrimary">@color/ios_grouped_background</item>
+        <item name="android:colorAccent">@color/glass_accent</item>
+        <item name="android:colorControlActivated">@color/glass_accent</item>
+        <item name="android:textColorPrimary">@color/ios_label</item>
+        <item name="android:textColorSecondary">@color/ios_secondary_label</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/ios_grouped_background</item>
+        <item name="android:windowLightStatusBar">@bool/ios_light_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/ios_light_bars</item>
+        <item name="android:actionBarStyle">@style/PenguinSettings.ActionBar</item>
+        <item name="android:listDivider">@null</item>
+        <item name="android:switchStyle">@style/PenguinSettings.Switch</item>
+    </style>
+
+    <style name="PenguinSettings.ActionBar" parent="@android:style/Widget.DeviceDefault.ActionBar.Solid">
+        <item name="android:background">@color/ios_grouped_background</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:titleTextStyle">@style/PenguinSettings.ActionBar.Title</item>
+    </style>
+
+    <style name="PenguinSettings.ActionBar.Title" parent="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Title">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/ios_label</item>
+    </style>
+
+    <style name="PenguinSettings.Switch" parent="@android:style/Widget.Material.CompoundButton.Switch">
+        <item name="android:thumb">@drawable/ios_switch_thumb</item>
+        <item name="android:track">@drawable/ios_switch_track</item>
+        <item name="android:thumbTint">@null</item>
+        <item name="android:trackTint">@null</item>
+        <item name="android:switchMinWidth">51dp</item>
+        <item name="android:showText">false</item>
+        <item name="android:background">@null</item>
+    </style>
+
+
+
+</resources>

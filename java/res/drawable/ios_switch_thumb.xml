@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="2dp" android:right="2dp" android:top="2.5dp" android:bottom="1.5dp">
+        <shape android:shape="oval">
+            <solid android:color="#26000000" />
+        </shape>
+    </item>
+    <item android:left="2dp" android:right="2dp" android:top="2dp" android:bottom="2dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/ios_switch_thumb" />
+            <size android:width="27dp" android:height="27dp" />
+        </shape>
+    </item>
+</layer-list>
