@@ -1,2 +1,0 @@
-rootProject.name = "LatinIME"
-include ':tools:make-keyboard-text'
