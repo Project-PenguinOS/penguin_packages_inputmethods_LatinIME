@@ -3,7 +3,9 @@ package com.android.inputmethod.latin.glass;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -67,7 +69,12 @@ public final class GlassWindow {
                 blur ? R.color.glass_sheet_tint : R.color.glass_sheet_tint_opaque));
         sheet.setStroke(mContext.getResources().getDimensionPixelSize(
                 R.dimen.glass_sheet_rim_width), mContext.getColor(R.color.glass_sheet_rim));
-        mWindow.setBackgroundDrawable(sheet);
+        final GradientDrawable sheen = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] { mContext.getColor(R.color.glass_sheet_sheen), Color.TRANSPARENT,
+                        Color.TRANSPARENT });
+        sheen.setCornerRadius(
+                mContext.getResources().getDimension(R.dimen.glass_sheet_corner_radius));
+        mWindow.setBackgroundDrawable(new LayerDrawable(new Drawable[] { sheet, sheen }));
         mWindow.setBackgroundBlurRadius(blur ? mContext.getResources().getDimensionPixelSize(
                 R.dimen.glass_sheet_blur_radius) : 0);
     }

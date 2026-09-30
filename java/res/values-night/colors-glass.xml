@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="glass_sheet_tint">#5C1C1C1F</color>
+    <color name="glass_sheet_tint">#3D1C1C1F</color>
     <color name="glass_sheet_tint_opaque">#FF232326</color>
-    <color name="glass_sheet_rim">#24FFFFFF</color>
+    <color name="glass_sheet_rim">#3DFFFFFF</color>
+    <color name="glass_sheet_sheen">#1FFFFFFF</color>
     <color name="glass_key">#33FFFFFF</color>
     <color name="glass_key_pressed">#61FFFFFF</color>
     <color name="glass_key_functional">#33FFFFFF</color>
