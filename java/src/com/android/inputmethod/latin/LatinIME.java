@@ -791,6 +791,15 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     }
 
     @Override
+    public void onToolbarAction(final int viewId) {
+        if (viewId == R.id.glass_toolbar_hide) {
+            requestHideSelf(0);
+        } else if (viewId == R.id.glass_toolbar_settings) {
+            launchSettings(SettingsActivity.EXTRA_ENTRY_VALUE_LONG_PRESS_COMMA);
+        }
+    }
+
+    @Override
     public void onDestroy() {
         if (mGlassWindow != null) {
             mGlassWindow.release();
