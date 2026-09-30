@@ -79,8 +79,10 @@ public final class GlassPanels {
                 context.getResources().getDimensionPixelSize(R.dimen.glass_keyboard_height));
         final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, height);
+        panel.setClickable(true);
         mArea.addView(panel, lp);
-        mKeyboardView.setVisibility(View.INVISIBLE);
+        mKeyboardView.setAlpha(0f);
+        mKeyboardView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         if (mOneHandedControls != null) mOneHandedControls.setVisibility(View.GONE);
         mPanel = panel;
         mPanelId = panelId;
@@ -92,7 +94,10 @@ public final class GlassPanels {
         }
         mPanel = null;
         mPanelId = PANEL_NONE;
-        if (mKeyboardView != null) mKeyboardView.setVisibility(View.VISIBLE);
+        if (mKeyboardView != null) {
+            mKeyboardView.setAlpha(1f);
+            mKeyboardView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+        }
         if (mOneHandedControls != null) mOneHandedControls.setVisibility(View.VISIBLE);
     }
 

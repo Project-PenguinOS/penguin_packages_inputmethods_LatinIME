@@ -100,7 +100,6 @@ public final class TextEditPanelView extends LinearLayout {
             final int descriptionRes, final int keyCode) {
         final ImageButton key = GlassUi.iconKey(context, iconRes,
                 descriptionRes != 0 ? context.getString(descriptionRes) : null);
-        GlassUi.setIconSize(key, GlassUi.dp(context, 20));
         final Runnable repeat = new Runnable() {
             @Override
             public void run() {

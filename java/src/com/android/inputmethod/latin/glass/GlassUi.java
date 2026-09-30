@@ -67,27 +67,13 @@ final class GlassUi {
         final ImageButton b = new ImageButton(context);
         b.setImageResource(iconRes);
         b.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.glass_icon)));
-        b.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        b.setScaleType(ImageView.ScaleType.CENTER);
         b.setBackground(keyBackground(context));
         b.setContentDescription(description);
-        final int pad = dp(context, 12);
-        b.setPadding(pad, pad, pad, pad);
+        b.setPadding(0, 0, 0, 0);
         b.setHapticFeedbackEnabled(false);
         b.setSoundEffectsEnabled(false);
         return b;
-    }
-
-    static void setIconSize(final ImageButton button, final int sizePx) {
-        button.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        button.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
-            final int w = r - l;
-            final int h = b - t;
-            final int ph = Math.max(0, (w - sizePx) / 2);
-            final int pv = Math.max(0, (h - sizePx) / 2);
-            if (v.getPaddingLeft() != ph || v.getPaddingTop() != pv) {
-                v.setPadding(ph, pv, ph, pv);
-            }
-        });
     }
 
     static void setVisible(final View v, final boolean visible) {
