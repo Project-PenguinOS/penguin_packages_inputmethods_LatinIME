@@ -30,16 +30,39 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
     private static final long SUGGESTION_WINDOW_MS = 90 * 1000L;
     private static final int MAX_UNPINNED = 30;
     private static final int MAX_TEXT_LENGTH = 10_000;
+    private static final long MAX_IMAGE_BYTES = 20L * 1024 * 1024;
+    private static final java.util.concurrent.Executor IO_EXECUTOR =
+            java.util.concurrent.Executors.newSingleThreadExecutor();
+    private static final android.os.Handler MAIN =
+            new android.os.Handler(android.os.Looper.getMainLooper());
 
     public static final class Item {
         public final String mText;
+        public final String mImage;
+        public final String mMimeType;
         public final long mTimestamp;
         public boolean mPinned;
 
         Item(final String text, final long timestamp, final boolean pinned) {
+            this(text, null, null, timestamp, pinned);
+        }
+
+        Item(final String text, final String image, final String mimeType, final long timestamp,
+                final boolean pinned) {
             mText = text;
+            mImage = image;
+            mMimeType = mimeType;
             mTimestamp = timestamp;
             mPinned = pinned;
+        }
+
+        public boolean isImage() {
+            return mImage != null;
+        }
+
+        boolean sameContent(final Item other) {
+            return isImage() ? mImage.equals(other.mImage) : !other.isImage()
+                    && mText.equals(other.mText);
         }
     }
 
@@ -96,9 +119,51 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
         if (clip == null || clip.getItemCount() == 0) return;
         final ClipDescription description = clip.getDescription();
         if (isSensitive(description)) return;
+        final android.net.Uri uri = clip.getItemAt(0).getUri();
+        final String imageMime = imageMimeType(description, uri);
+        if (uri != null && imageMime != null) {
+            final long now = System.currentTimeMillis();
+            final String ext = imageMime.endsWith("png") ? "png"
+                    : imageMime.endsWith("gif") ? "gif"
+                    : imageMime.endsWith("webp") ? "webp" : "jpg";
+            final String name = "img_" + now + "." + ext;
+            IO_EXECUTOR.execute(() -> {
+                final File dir = getClipsDir();
+                if (dir == null) return;
+                try (java.io.InputStream in =
+                        mContext.getContentResolver().openInputStream(uri);
+                        FileOutputStream out = new FileOutputStream(new File(dir, name))) {
+                    if (in == null) return;
+                    final byte[] buffer = new byte[64 * 1024];
+                    long total = 0;
+                    int n;
+                    while ((n = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, n);
+                        total += n;
+                        if (total > MAX_IMAGE_BYTES) throw new IOException("image too large");
+                    }
+                } catch (IOException | SecurityException e) {
+                    Log.w(TAG, "Cannot keep copied image", e);
+                    new File(dir, name).delete();
+                    return;
+                }
+                MAIN.post(() -> addItem(new Item("", name, imageMime, now, false)));
+            });
+            return;
+        }
         final CharSequence text = clip.getItemAt(0).coerceToText(mContext);
         if (TextUtils.isEmpty(text) || TextUtils.getTrimmedLength(text) == 0) return;
         add(text.toString());
+    }
+
+    private static String imageMimeType(final ClipDescription description,
+            final android.net.Uri uri) {
+        if (description == null || uri == null) return null;
+        for (int i = 0; i < description.getMimeTypeCount(); i++) {
+            final String mime = description.getMimeType(i);
+            if (mime != null && mime.startsWith("image/")) return mime;
+        }
+        return null;
     }
 
     private static boolean isSensitive(final ClipDescription description) {
@@ -108,19 +173,23 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
     }
 
     private void add(String text) {
-        ensureLoaded();
         if (text.length() > MAX_TEXT_LENGTH) {
             text = text.substring(0, MAX_TEXT_LENGTH);
         }
+        addItem(new Item(text, System.currentTimeMillis(), false));
+    }
+
+    private void addItem(Item item) {
+        ensureLoaded();
         boolean pinned = false;
         for (final Iterator<Item> it = mItems.iterator(); it.hasNext();) {
-            final Item item = it.next();
-            if (item.mText.equals(text)) {
-                pinned = item.mPinned;
+            final Item existing = it.next();
+            if (existing.sameContent(item)) {
+                pinned = existing.mPinned;
                 it.remove();
             }
         }
-        final Item item = new Item(text, System.currentTimeMillis(), pinned);
+        item.mPinned = pinned;
         mItems.add(0, item);
         mSuggestion = item;
         trim();
@@ -141,7 +210,8 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
 
     public String getRecentSuggestion() {
         if (!mEnabled || mSuggestion == null) return null;
-        if (System.currentTimeMillis() - mSuggestion.mTimestamp > SUGGESTION_WINDOW_MS) {
+        if (mSuggestion.isImage()
+                || System.currentTimeMillis() - mSuggestion.mTimestamp > SUGGESTION_WINDOW_MS) {
             mSuggestion = null;
             return null;
         }
@@ -160,12 +230,14 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
 
     public void remove(final Item item) {
         mItems.remove(item);
+        deleteImage(item);
         if (mSuggestion == item) mSuggestion = null;
         save();
         notifyChanged();
     }
 
     public void clearUnpinned() {
+        for (final Item item : mItems) if (!item.mPinned) deleteImage(item);
         mItems.removeIf(item -> !item.mPinned);
         mSuggestion = null;
         save();
@@ -174,7 +246,16 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
 
     private boolean expire() {
         final long now = System.currentTimeMillis();
-        return mItems.removeIf(item -> !item.mPinned && now - item.mTimestamp > EXPIRY_MS);
+        boolean removed = false;
+        for (final Iterator<Item> it = mItems.iterator(); it.hasNext();) {
+            final Item item = it.next();
+            if (!item.mPinned && now - item.mTimestamp > EXPIRY_MS) {
+                deleteImage(item);
+                it.remove();
+                removed = true;
+            }
+        }
+        return removed;
     }
 
     private void trim() {
@@ -183,7 +264,10 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
         for (final Iterator<Item> it = mItems.iterator(); it.hasNext();) {
             final Item item = it.next();
             if (item.mPinned) continue;
-            if (++unpinned > MAX_UNPINNED) it.remove();
+            if (++unpinned > MAX_UNPINNED) {
+                deleteImage(item);
+                it.remove();
+            }
         }
     }
 
@@ -193,15 +277,45 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
         }
     }
 
-    private File getFile() {
-        final UserManager um = mContext.getSystemService(UserManager.class);
+    static File getCeFilesDir(final Context context) {
+        final UserManager um = context.getSystemService(UserManager.class);
         if (um == null || !um.isUserUnlocked()) return null;
-        final String dataDir = mContext.getDataDir().getPath();
+        final String dataDir = context.getDataDir().getPath();
         final String ceDir = dataDir.replaceFirst("/user_de/", "/user/");
-        if (ceDir.equals(dataDir) && mContext.isDeviceProtectedStorage()) return null;
+        if (ceDir.equals(dataDir) && context.isDeviceProtectedStorage()) return null;
         final File dir = new File(ceDir, "files");
         if (!dir.isDirectory() && !dir.mkdirs()) return null;
-        return new File(dir, FILE_NAME);
+        return dir;
+    }
+
+    static File getClipsDir(final Context context) {
+        final File files = getCeFilesDir(context);
+        if (files == null) return null;
+        final File dir = new File(files, "clips");
+        if (!dir.isDirectory() && !dir.mkdirs()) return null;
+        return dir;
+    }
+
+    private File getClipsDir() {
+        return getClipsDir(mContext);
+    }
+
+    public File getImageFile(final Item item) {
+        if (!item.isImage()) return null;
+        final File dir = getClipsDir();
+        return dir == null ? null : new File(dir, item.mImage);
+    }
+
+    private void deleteImage(final Item item) {
+        final File file = getImageFile(item);
+        if (file != null) {
+            IO_EXECUTOR.execute(file::delete);
+        }
+    }
+
+    private File getFile() {
+        final File dir = getCeFilesDir(mContext);
+        return dir == null ? null : new File(dir, FILE_NAME);
     }
 
     private void ensureLoaded() {
@@ -216,13 +330,15 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
             final ArrayList<Item> loaded = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 final JSONObject o = array.getJSONObject(i);
-                loaded.add(new Item(o.getString("text"), o.getLong("time"),
-                        o.optBoolean("pinned")));
+                loaded.add(new Item(o.getString("text"),
+                        o.has("image") ? o.getString("image") : null,
+                        o.has("mime") ? o.getString("mime") : null,
+                        o.getLong("time"), o.optBoolean("pinned")));
             }
             for (final Item item : loaded) {
                 boolean duplicate = false;
                 for (final Item existing : mItems) {
-                    if (existing.mText.equals(item.mText)) {
+                    if (existing.sameContent(item)) {
                         existing.mPinned |= item.mPinned;
                         duplicate = true;
                     }
@@ -241,10 +357,14 @@ public final class ClipboardHistory implements ClipboardManager.OnPrimaryClipCha
         final JSONArray array = new JSONArray();
         try {
             for (final Item item : mItems) {
-                array.put(new JSONObject()
+                final JSONObject o = new JSONObject()
                         .put("text", item.mText)
                         .put("time", item.mTimestamp)
-                        .put("pinned", item.mPinned));
+                        .put("pinned", item.mPinned);
+                if (item.isImage()) {
+                    o.put("image", item.mImage).put("mime", item.mMimeType);
+                }
+                array.put(o);
             }
         } catch (JSONException e) {
             return;

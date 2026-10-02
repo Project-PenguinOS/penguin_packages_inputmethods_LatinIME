@@ -963,6 +963,38 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         }
 
         @Override
+        public void commitImage(final java.io.File file, final String mimeType) {
+            final InputConnection ic = getCurrentInputConnection();
+            final EditorInfo editorInfo = getCurrentInputEditorInfo();
+            if (ic == null || editorInfo == null || file == null) return;
+            boolean accepted = false;
+            final String[] accepts = editorInfo.contentMimeTypes;
+            if (accepts != null) {
+                for (final String accept : accepts) {
+                    if (android.content.ClipDescription.compareMimeTypes(mimeType, accept)) {
+                        accepted = true;
+                        break;
+                    }
+                }
+            }
+            if (!accepted) {
+                android.widget.Toast.makeText(LatinIME.this,
+                        R.string.glass_clipboard_image_unsupported,
+                        android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
+            mInputLogic.commitTyped(mSettings.getCurrent(), LastComposedWord.NOT_A_SEPARATOR);
+            final android.view.inputmethod.InputContentInfo info =
+                    new android.view.inputmethod.InputContentInfo(
+                            com.android.inputmethod.latin.glass.ClipImageProvider.uriFor(
+                                    LatinIME.this, file.getName()),
+                            new android.content.ClipDescription(
+                                    getString(R.string.glass_clipboard_image),
+                                    new String[] { mimeType }));
+            ic.commitContent(info, InputConnection.INPUT_CONTENT_GRANT_READ_URI_PERMISSION, null);
+        }
+
+        @Override
         public void sendKey(final int keyCode, final boolean shift) {
             final InputConnection ic = getCurrentInputConnection();
             if (ic == null) return;

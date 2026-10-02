@@ -209,6 +209,11 @@
         </receiver>
 
         <!-- Content providers -->
+        <provider android:name="com.android.inputmethod.latin.glass.ClipImageProvider"
+             android:authorities="com.penguin.keyboard.clipimages"
+             android:exported="false"
+             android:grantUriPermissions="true" />
+
         <provider android:name="com.android.inputmethod.dictionarypack.DictionaryProvider"
              android:grantUriPermissions="true"
              android:exported="false"

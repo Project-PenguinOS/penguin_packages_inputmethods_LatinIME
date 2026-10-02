@@ -18,6 +18,8 @@
     <string name="glass_clipboard_unpin">Unpin</string>
     <string name="glass_clipboard_delete">Delete</string>
     <string name="glass_clipboard_clear">Clear</string>
+    <string name="glass_clipboard_image">Copied image</string>
+    <string name="glass_clipboard_image_unsupported">This app can’t paste images here</string>
     <string name="glass_clipboard_disabled">Clipboard history is off</string>
     <string name="glass_clipboard_enable">Turn On</string>
     <string name="glass_edit_select">Select</string>

@@ -158,6 +158,24 @@ public final class ClipboardPanelView extends LinearLayout
         menu.show();
     }
 
+    private static android.graphics.Bitmap loadThumbnail(final java.io.File file,
+            final int maxSize) {
+        if (file == null || !file.isFile()) return null;
+        final android.graphics.BitmapFactory.Options bounds =
+                new android.graphics.BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        android.graphics.BitmapFactory.decodeFile(file.getPath(), bounds);
+        int sample = 1;
+        while (bounds.outWidth / (sample * 2) >= maxSize
+                && bounds.outHeight / (sample * 2) >= maxSize) {
+            sample *= 2;
+        }
+        final android.graphics.BitmapFactory.Options opts =
+                new android.graphics.BitmapFactory.Options();
+        opts.inSampleSize = sample;
+        return android.graphics.BitmapFactory.decodeFile(file.getPath(), opts);
+    }
+
     private final class Adapter extends RecyclerView.Adapter<Holder> {
         private final ArrayList<ClipboardHistory.Item> mItems = new ArrayList<>();
 
@@ -186,6 +204,7 @@ public final class ClipboardPanelView extends LinearLayout
 
     private final class Holder extends RecyclerView.ViewHolder {
         private final TextView mText;
+        private final ImageView mImage;
         private final ImageView mPin;
         private ClipboardHistory.Item mItem;
 
@@ -207,6 +226,18 @@ public final class ClipboardPanelView extends LinearLayout
             mText.setPadding(p, p, p + GlassUi.dp(context, 10), p);
             card.addView(mText, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
+            mImage = new ImageView(context);
+            mImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            mImage.setClipToOutline(true);
+            mImage.setOutlineProvider(new android.view.ViewOutlineProvider() {
+                @Override
+                public void getOutline(final View view, final android.graphics.Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(),
+                            GlassUi.dp(view.getContext(), 12));
+                }
+            });
+            card.addView(mImage, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, GlassUi.dp(context, 96)));
             mPin = new ImageView(context);
             mPin.setImageResource(R.drawable.ic_f7_pin_fill);
             mPin.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.glass_accent)));
@@ -218,7 +249,11 @@ public final class ClipboardPanelView extends LinearLayout
             card.setOnClickListener(v -> {
                 if (mItem == null) return;
                 mHost.performFeedback(v);
-                mHost.commitText(mItem.mText);
+                if (mItem.isImage()) {
+                    mHost.commitImage(mHistory.getImageFile(mItem), mItem.mMimeType);
+                } else {
+                    mHost.commitText(mItem.mText);
+                }
             });
             card.setOnLongClickListener(v -> {
                 if (mItem == null) return false;
@@ -230,9 +265,21 @@ public final class ClipboardPanelView extends LinearLayout
 
         void bind(final ClipboardHistory.Item item) {
             mItem = item;
-            mText.setText(item.mText);
             mPin.setVisibility(item.mPinned ? VISIBLE : GONE);
-            itemView.setContentDescription(item.mText);
+            if (item.isImage()) {
+                mText.setVisibility(GONE);
+                mImage.setVisibility(VISIBLE);
+                mImage.setImageBitmap(loadThumbnail(mHistory.getImageFile(item),
+                        GlassUi.dp(itemView.getContext(), 180)));
+                itemView.setContentDescription(
+                        itemView.getContext().getString(R.string.glass_clipboard_image));
+            } else {
+                mImage.setVisibility(GONE);
+                mImage.setImageDrawable(null);
+                mText.setVisibility(VISIBLE);
+                mText.setText(item.mText);
+                itemView.setContentDescription(item.mText);
+            }
         }
     }
 }
