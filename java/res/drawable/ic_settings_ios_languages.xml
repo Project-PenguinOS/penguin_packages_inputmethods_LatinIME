@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="29dp"
+    android:height="29dp">
+    <item>
+        <shape>
+            <solid android:color="#FF007AFF" />
+            <corners android:radius="7dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_f7_globe"
+        android:left="5.5dp" android:top="5.5dp" android:right="5.5dp" android:bottom="5.5dp" />
+</layer-list>

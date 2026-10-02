@@ -47,12 +47,20 @@ final class IosGroupedAdapter implements ListAdapter {
         if (isRow(position)) {
             final boolean first = !isRow(position - 1);
             final boolean last = !isRow(position + 1);
+            final View icon = view.findViewById(android.R.id.icon);
+            final boolean hasIcon = icon != null && icon.getVisibility() == View.VISIBLE
+                    && icon instanceof android.widget.ImageView
+                    && ((android.widget.ImageView) icon).getDrawable() != null;
             final Drawable bg = view.getBackground();
+            final CellDrawable cell;
             if (bg instanceof CellDrawable) {
-                ((CellDrawable) bg).setPosition(first, last);
+                cell = (CellDrawable) bg;
             } else {
-                view.setBackground(new CellDrawable(view.getContext(), first, last));
+                cell = new CellDrawable(view.getContext(), first, last);
+                view.setBackground(cell);
             }
+            cell.setPosition(first, last);
+            cell.setSeparatorInsetDp(hasIcon ? 75 : 32);
         }
         return view;
     }
@@ -84,7 +92,8 @@ final class IosGroupedAdapter implements ListAdapter {
         private final int mPressedColor;
         private final float mInset;
         private final float mRadius;
-        private final float mSeparatorInset;
+        private float mSeparatorInset;
+        private final float mDensity;
         private boolean mFirst;
         private boolean mLast;
         private boolean mPressed;
@@ -98,8 +107,13 @@ final class IosGroupedAdapter implements ListAdapter {
             mInset = 16 * density;
             mRadius = 10 * density;
             mSeparatorInset = 32 * density;
+            mDensity = density;
             mFirst = first;
             mLast = last;
+        }
+
+        void setSeparatorInsetDp(final float dp) {
+            mSeparatorInset = dp * mDensity;
         }
 
         void setPosition(final boolean first, final boolean last) {
