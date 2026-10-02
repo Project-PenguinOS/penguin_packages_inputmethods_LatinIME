@@ -26,6 +26,44 @@
     android:orientation="vertical"
     style="?attr/emojiPalettesViewStyle"
 >
+    <FrameLayout
+        android:id="@+id/emoji_search_row"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/emoji_search_row_height"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:contentDescription="@string/emoji_search_hint"
+        android:hapticFeedbackEnabled="false"
+        android:soundEffectsEnabled="false">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/emoji_search_field_height"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:duplicateParentState="true"
+            android:importantForAccessibility="noHideDescendants"
+            android:background="@drawable/emoji_search_field_background">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_f7_search"
+                android:tint="@color/glass_suggestion_secondary"
+                android:contentDescription="@null" />
+            <TextView
+                android:id="@+id/emoji_search_hint"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="6dp"
+                android:singleLine="true"
+                android:text="@string/emoji_search_hint"
+                android:textColor="@color/glass_suggestion_secondary"
+                android:textSize="@dimen/emoji_search_text_size" />
+        </LinearLayout>
+    </FrameLayout>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

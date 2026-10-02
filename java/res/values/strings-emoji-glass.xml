@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="emoji_search_hint">Search emoji</string>
+    <string name="emoji_search_close">Close emoji search</string>
+    <string name="emoji_search_clear">Clear search</string>
+    <string name="emoji_search_no_results">No emoji found</string>
     <string name="emoji_skin_tones">Skin tones</string>
 </resources>

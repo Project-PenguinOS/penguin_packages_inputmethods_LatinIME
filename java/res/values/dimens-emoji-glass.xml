@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="emoji_search_row_height">44dp</dimen>
+    <dimen name="emoji_search_field_height">34dp</dimen>
+    <dimen name="emoji_search_field_corner_radius">10dp</dimen>
+    <dimen name="emoji_search_text_size">17sp</dimen>
+    <dimen name="emoji_search_result_width">44dp</dimen>
+    <dimen name="emoji_search_result_text_size">26sp</dimen>
+</resources>

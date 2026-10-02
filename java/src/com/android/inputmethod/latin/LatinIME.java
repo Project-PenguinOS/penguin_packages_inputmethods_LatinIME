@@ -81,6 +81,7 @@ import com.android.inputmethod.keyboard.KeyboardId;
 import com.android.inputmethod.keyboard.KeyboardSwitcher;
 import com.android.inputmethod.keyboard.KeyboardTheme;
 import com.android.inputmethod.keyboard.MainKeyboardView;
+import com.android.inputmethod.keyboard.emoji.EmojiSearchController;
 import com.android.inputmethod.latin.Suggest.OnGetSuggestedWordsCallback;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
 import com.android.inputmethod.latin.common.Constants;
@@ -110,6 +111,7 @@ import com.android.inputmethod.latin.utils.IntentUtils;
 import com.android.inputmethod.latin.utils.Fonts;
 import com.android.inputmethod.latin.utils.JniUtils;
 import com.android.inputmethod.latin.utils.LeakGuardHandlerWrapper;
+import com.android.inputmethod.latin.utils.RecapitalizeStatus;
 import com.android.inputmethod.latin.utils.StatsUtils;
 import com.android.inputmethod.latin.utils.StatsUtilsManager;
 import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
@@ -178,6 +180,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     private GlassWindow mGlassWindow;
     private ClipboardHistory mClipboardHistory;
     private GlassPanels mGlassPanels;
+    private EmojiSearchController mEmojiSearch;
     private Dictation mDictation;
     private FloatingKeyboard mFloatingKeyboard;
     private final ClipboardHistory.Listener mClipboardListener = () -> updateClipChip();
@@ -644,6 +647,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             final MainKeyboardView keyboardView = mKeyboardSwitcher.getMainKeyboardView();
             if (keyboardView != null) keyboardView.onWindowShown();
         });
+        mEmojiSearch = new EmojiSearchController(mEmojiSearchHost);
 
         mHandler.onCreate();
 
@@ -978,6 +982,31 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         }
     }
 
+    private final EmojiSearchController.Host mEmojiSearchHost = new EmojiSearchController.Host() {
+        @Override
+        public void showLetterKeys() {
+            onCodeInput(Constants.CODE_ALPHA_FROM_EMOJI, Constants.NOT_A_COORDINATE,
+                    Constants.NOT_A_COORDINATE, false);
+        }
+
+        @Override
+        public void showEmojiPalette() {
+            onCodeInput(Constants.CODE_EMOJI, Constants.NOT_A_COORDINATE,
+                    Constants.NOT_A_COORDINATE, false);
+        }
+
+        @Override
+        public void commitEmoji(final String emoji) {
+            commitTextInput(emoji);
+        }
+
+        @Override
+        public void performFeedback(final View view) {
+            AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                    Constants.CODE_UNSPECIFIED, view);
+        }
+    };
+
     private final PanelHost mPanelHost = new PanelHost() {
         @Override
         public void commitText(final String text) {
@@ -1182,6 +1211,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         }
         if (mGlassPanels != null) {
             mGlassPanels.attach(view);
+        }
+        if (mEmojiSearch != null) {
+            mEmojiSearch.attach(view);
         }
     }
 
@@ -1460,6 +1492,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         super.onFinishInputView(finishingInput);
         if (mGlassPanels != null) {
             mGlassPanels.hidePanel();
+        }
+        if (mEmojiSearch != null) {
+            mEmojiSearch.reset();
         }
         cleanupInternalStateForFinishInput();
     }
@@ -1864,6 +1899,13 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     @Override
     public void onCodeInput(final int codePoint, final int x, final int y,
             final boolean isKeyRepeat) {
+        if (mEmojiSearch != null && mEmojiSearch.onKey(codePoint)) {
+            mKeyboardSwitcher.onEvent(createSoftwareKeypressEvent(
+                    getCodePointForKeyboard(codePoint), Constants.NOT_A_COORDINATE,
+                    Constants.NOT_A_COORDINATE, isKeyRepeat),
+                    Constants.TextUtils.CAP_MODE_OFF, RecapitalizeStatus.NOT_A_RECAPITALIZE_MODE);
+            return;
+        }
         // TODO: this processing does not belong inside LatinIME, the caller should be doing this.
         final MainKeyboardView mainKeyboardView = mKeyboardSwitcher.getMainKeyboardView();
         // x and y include some padding, but everything down the line (especially native
@@ -1913,6 +1955,13 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     // Called from PointerTracker through the KeyboardActionListener interface
     @Override
     public void onTextInput(final String rawText) {
+        if (mEmojiSearch != null && mEmojiSearch.onText(rawText)) {
+            return;
+        }
+        commitTextInput(rawText);
+    }
+
+    private void commitTextInput(final String rawText) {
         // TODO: have the keyboard pass the correct key code when we need it.
         final Event event = Event.createSoftwareTextEvent(rawText, Constants.CODE_OUTPUT_TEXT);
         final InputTransaction completeInputTransaction =
@@ -1924,6 +1973,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     @Override
     public void onStartBatchInput() {
+        if (mEmojiSearch != null && mEmojiSearch.isActive()) return;
         mInputLogic.onStartBatchInput(mSettings.getCurrent(), mKeyboardSwitcher, mHandler);
         mGestureConsumer.onGestureStarted(
                 mRichImm.getCurrentSubtypeLocale(),
@@ -1932,17 +1982,20 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     @Override
     public void onUpdateBatchInput(final InputPointers batchPointers) {
+        if (mEmojiSearch != null && mEmojiSearch.isActive()) return;
         mInputLogic.onUpdateBatchInput(batchPointers);
     }
 
     @Override
     public void onEndBatchInput(final InputPointers batchPointers) {
+        if (mEmojiSearch != null && mEmojiSearch.isActive()) return;
         mInputLogic.onEndBatchInput(batchPointers);
         mGestureConsumer.onGestureCompleted(batchPointers);
     }
 
     @Override
     public void onCancelBatchInput() {
+        if (mEmojiSearch != null && mEmojiSearch.isActive()) return;
         mInputLogic.onCancelBatchInput(mHandler);
         mGestureConsumer.onGestureCanceled();
     }

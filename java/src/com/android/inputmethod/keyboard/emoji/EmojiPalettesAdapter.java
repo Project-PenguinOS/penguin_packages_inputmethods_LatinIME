@@ -67,6 +67,15 @@ final class EmojiPalettesAdapter extends RecyclerView.Adapter<EmojiPalettesAdapt
         }
     }
 
+    public void addRecentKeyNow(final Key key) {
+        mRecentsKeyboard.addKeyFirst(key);
+        final KeyboardView recentKeyboardView =
+                mActiveKeyboardViews.get(mEmojiCategory.getRecentTabId());
+        if (recentKeyboardView != null) {
+            recentKeyboardView.invalidateAllKeys();
+        }
+    }
+
     public void invalidateKeyboards() {
         for (int i = 0; i < mActiveKeyboardViews.size(); i++) {
             mActiveKeyboardViews.valueAt(i).invalidateAllKeys();

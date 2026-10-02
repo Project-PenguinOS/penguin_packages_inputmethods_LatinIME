@@ -55,8 +55,13 @@ import com.android.inputmethod.latin.AudioAndHapticFeedbackManager;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.RichInputMethodSubtype;
 import com.android.inputmethod.latin.common.Constants;
+import com.android.inputmethod.latin.emoji.EmojiKeywords;
 import com.android.inputmethod.latin.emoji.EmojiSkinTones;
+import com.android.inputmethod.latin.utils.Fonts;
 import com.android.inputmethod.latin.utils.ResourceUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * View class to implement Emoji palettes.
@@ -98,6 +103,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
     private final SharedPreferences mPrefs;
     private FrameLayout mPagerFrame;
     private SkinTonePicker mSkinTonePicker;
+    private Runnable mOnSearchRequested;
 
     public EmojiPalettesView(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.attr.emojiPalettesViewStyle);
@@ -126,6 +132,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
                 R.styleable.EmojiPalettesView, defStyle, R.style.EmojiPalettesView);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         EmojiSkinTones.init(context);
+        EmojiKeywords.init(context);
         mEmojiCategory = new EmojiCategory(mPrefs, res, layoutSet, emojiPalettesViewAttr);
         mCategoryIndicatorEnabled = emojiPalettesViewAttr.getBoolean(
                 R.styleable.EmojiPalettesView_categoryIndicatorEnabled, false);
@@ -150,6 +157,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
                 + getPaddingLeft() + getPaddingRight();
         final int height = ResourceUtils.getDefaultKeyboardHeight(res)
                 + res.getDimensionPixelSize(R.dimen.config_suggestions_strip_height)
+                + res.getDimensionPixelSize(R.dimen.emoji_search_row_height)
                 + getPaddingTop() + getPaddingBottom();
         setMeasuredDimension(width, height);
     }
@@ -241,6 +249,16 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
 
         mPagerFrame = findViewById(R.id.emoji_pager_frame);
         mSkinTonePicker = new SkinTonePicker(mPagerFrame);
+        final View searchRow = findViewById(R.id.emoji_search_row);
+        ((TextView) findViewById(R.id.emoji_search_hint)).setTypeface(Fonts.regular());
+        searchRow.setOnClickListener(v -> {
+            AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                    Constants.CODE_UNSPECIFIED, v);
+            if (mOnSearchRequested != null) {
+                mOnSearchRequested.run();
+            }
+        });
+
         mEmojiCategoryPageIndicatorView =
                 (EmojiCategoryPageIndicatorView)findViewById(R.id.emoji_category_page_id_view);
         mEmojiCategoryPageIndicatorView.setColors(
@@ -410,6 +428,26 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         final Key key = mEmojiCategory.findKey(emoji);
         return key != null ? key
                 : mEmojiCategory.getKeyboard(EmojiCategory.ID_RECENTS, 0).createKey(emoji);
+    }
+
+    public void setOnSearchRequestedListener(final Runnable listener) {
+        mOnSearchRequested = listener;
+    }
+
+    public void addRecentEmoji(final String emoji) {
+        if (mEmojiPalettesAdapter == null) return;
+        mEmojiPalettesAdapter.addRecentKeyNow(findOrCreateKey(emoji));
+    }
+
+    public List<String> getRecentEmoji(final int max) {
+        final ArrayList<String> out = new ArrayList<>();
+        for (final Key key : mEmojiCategory.getKeyboard(EmojiCategory.ID_RECENTS, 0)
+                .getSortedKeys()) {
+            if (out.size() >= max) break;
+            final String text = DynamicGridKeyboard.getEmojiText(key);
+            if (text != null) out.add(text);
+        }
+        return out;
     }
 
     public void setHardwareAcceleratedDrawingEnabled(final boolean enabled) {
