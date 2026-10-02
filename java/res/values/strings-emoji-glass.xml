@@ -4,5 +4,6 @@
     <string name="emoji_search_close">Close emoji search</string>
     <string name="emoji_search_clear">Clear search</string>
     <string name="emoji_search_no_results">No emoji found</string>
+    <string name="emoji_recents_empty">Frequently used emoji appear here</string>
     <string name="emoji_skin_tones">Skin tones</string>
 </resources>

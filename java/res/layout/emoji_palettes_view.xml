@@ -107,6 +107,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
+        <TextView
+            android:id="@+id/emoji_recents_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="@string/emoji_recents_empty"
+            android:textColor="@color/glass_suggestion_secondary"
+            android:textSize="15sp"
+            android:visibility="gone" />
     </FrameLayout>
     <com.android.inputmethod.keyboard.emoji.EmojiCategoryPageIndicatorView
         android:id="@+id/emoji_category_page_id_view"

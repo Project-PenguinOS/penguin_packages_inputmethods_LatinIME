@@ -35,6 +35,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -102,6 +103,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
     private final EmojiCategory mEmojiCategory;
     private final SharedPreferences mPrefs;
     private FrameLayout mPagerFrame;
+    private TextView mRecentsEmptyView;
     private SkinTonePicker mSkinTonePicker;
     private Runnable mOnSearchRequested;
 
@@ -168,9 +170,8 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         tspec.setContent(R.id.emoji_keyboard_dummy);
         final ImageView iconView = (ImageView)LayoutInflater.from(getContext()).inflate(
                 R.layout.emoji_keyboard_tab_icon, null);
-        // TODO: Replace background color with its own setting rather than using the
-        //       category page indicator background as a workaround.
-        iconView.setBackgroundColor(mCategoryPageIndicatorBackground);
+        iconView.setBackgroundResource(R.drawable.emoji_tab_background);
+        iconView.setImageTintList(getContext().getColorStateList(R.color.emoji_tab_icon));
         iconView.setImageResource(mEmojiCategory.getCategoryTabIcon(categoryId));
         iconView.setContentDescription(mEmojiCategory.getAccessibilityDescription(categoryId));
         tspec.setIndicator(iconView);
@@ -187,6 +188,12 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         }
         mTabHost.setOnTabChangedListener(this);
         final TabWidget tabWidget = mTabHost.getTabWidget();
+        for (int i = 0; i < tabWidget.getTabCount(); i++) {
+            final View tab = tabWidget.getChildTabViewAt(i);
+            final ViewGroup.LayoutParams lp = tab.getLayoutParams();
+            lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            tab.setLayoutParams(lp);
+        }
         tabWidget.setStripEnabled(mCategoryIndicatorEnabled);
         if (mCategoryIndicatorEnabled) {
             // On TabWidget's strip, what looks like an indicator is actually a background.
@@ -210,6 +217,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
                 mEmojiCategory.setCurrentCategoryPageId(newPos.second /* categoryPageId */);
                 updateEmojiCategoryPageIdView();
                 mCurrentPagerPosition = position;
+                updateRecentsEmptyView();
             }
 
             @Override
@@ -249,6 +257,8 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
 
         mPagerFrame = findViewById(R.id.emoji_pager_frame);
         mSkinTonePicker = new SkinTonePicker(mPagerFrame);
+        mRecentsEmptyView = findViewById(R.id.emoji_recents_empty);
+        mRecentsEmptyView.setTypeface(Fonts.regular());
         final View searchRow = findViewById(R.id.emoji_search_row);
         ((TextView) findViewById(R.id.emoji_search_hint)).setTypeface(Fonts.regular());
         searchRow.setOnClickListener(v -> {
@@ -439,6 +449,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
     public void addRecentEmoji(final String emoji) {
         if (mEmojiPalettesAdapter == null) return;
         mEmojiPalettesAdapter.addRecentKeyNow(findOrCreateKey(emoji));
+        updateRecentsEmptyView();
     }
 
     public List<String> getRecentEmoji(final int max) {
@@ -450,6 +461,14 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
             if (text != null) out.add(text);
         }
         return out;
+    }
+
+    private void updateRecentsEmptyView() {
+        if (mRecentsEmptyView == null) return;
+        final boolean empty = mEmojiCategory.isInRecentTab()
+                && mEmojiCategory.getKeyboard(EmojiCategory.ID_RECENTS, 0)
+                        .getSortedKeys().isEmpty();
+        mRecentsEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
     }
 
     public void setHardwareAcceleratedDrawingEnabled(final boolean enabled) {
@@ -485,6 +504,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         mEmojiPager.setCurrentItem(mCurrentPagerPosition, false);
         mEmojiPager.post(() -> setCurrentCategoryId(mEmojiCategory.getCurrentCategoryId(),
                 true));
+        updateRecentsEmptyView();
     }
 
     public void stopEmojiPalettes() {
@@ -532,6 +552,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
             mTabHost.setCurrentTab(newTabId);
         }
         dismissSkinTonePicker();
+        updateRecentsEmptyView();
     }
 
     private static class DeleteKeyOnTouchListener implements OnTouchListener {
