@@ -327,6 +327,11 @@ public final class FusionDictionary implements Iterable<WordProperty> {
         add(getCodePoints(word), probabilityInfo, shortcutTargets, isNotAWord, isPossiblyOffensive);
     }
 
+    public void add(final String word, final ProbabilityInfo probabilityInfo,
+            final boolean isNotAWord, final boolean isPossiblyOffensive) {
+        add(word, probabilityInfo, null, isNotAWord, isPossiblyOffensive);
+    }
+
     /**
      * Validity check for a PtNode array.
      *

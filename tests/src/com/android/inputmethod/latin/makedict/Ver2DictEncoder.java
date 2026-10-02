@@ -240,6 +240,32 @@ public class Ver2DictEncoder implements DictEncoder {
                 childrenPos);
     }
 
+    private void writeShortcuts(final ArrayList<WeightedString> shortcuts,
+            final HashMap<Integer, Integer> codePointToOneByteCodeMap) {
+        if (null == shortcuts || shortcuts.isEmpty()) return;
+
+        final int indexOfShortcutByteSize = mPosition;
+        mPosition += FormatSpec.PTNODE_SHORTCUT_LIST_SIZE_SIZE;
+        final Iterator<WeightedString> shortcutIterator = shortcuts.iterator();
+        while (shortcutIterator.hasNext()) {
+            final WeightedString target = shortcutIterator.next();
+            final int shortcutFlags = BinaryDictEncoderUtils.makeShortcutFlags(
+                    shortcutIterator.hasNext(),
+                    target.getProbability());
+            mPosition = BinaryDictEncoderUtils.writeUIntToBuffer(mBuffer, mPosition, shortcutFlags,
+                    FormatSpec.PTNODE_ATTRIBUTE_FLAGS_SIZE);
+            final int shortcutShift = CharEncoding.writeString(mBuffer, mPosition, target.mWord,
+                codePointToOneByteCodeMap);
+            mPosition += shortcutShift;
+        }
+        final int shortcutByteSize = mPosition - indexOfShortcutByteSize;
+        if (shortcutByteSize > FormatSpec.MAX_SHORTCUT_LIST_SIZE_IN_A_PTNODE) {
+            throw new RuntimeException("Shortcut list too large");
+        }
+        BinaryDictEncoderUtils.writeUIntToBuffer(mBuffer, indexOfShortcutByteSize, shortcutByteSize,
+                FormatSpec.PTNODE_SHORTCUT_LIST_SIZE_SIZE);
+    }
+
     /**
      * Write a bigram attributes list to mBuffer.
      *
@@ -275,6 +301,7 @@ public class Ver2DictEncoder implements DictEncoder {
         writeCharacters(ptNode.mChars, ptNode.hasSeveralChars(), codePointToOneByteCodeMap);
         writeFrequency(ptNode.getProbability());
         writeChildrenPosition(ptNode, codePointToOneByteCodeMap);
+        writeShortcuts(ptNode.mShortcutTargets, null);
         writeBigrams(ptNode.mBigrams, dict);
     }
 }

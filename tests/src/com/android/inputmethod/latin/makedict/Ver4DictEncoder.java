@@ -74,10 +74,23 @@ public class Ver4DictEncoder implements DictEncoder {
             throw new IOException("Cannot create dictionary file");
         }
         for (final WordProperty wordProperty : dict) {
-            if (!binaryDict.addUnigramEntry(wordProperty.mWord, wordProperty.getProbability(),
-                    wordProperty.mIsBeginningOfSentence, wordProperty.mIsNotAWord,
-                    wordProperty.mIsPossiblyOffensive, 0 /* timestamp */)) {
-                MakedictLog.e("Cannot add unigram entry for " + wordProperty.mWord);
+            if (wordProperty.mHasShortcuts) {
+                for (final WeightedString shortcutTarget : wordProperty.mShortcutTargets) {
+                    if (!binaryDict.addUnigramEntry(wordProperty.mWord,
+                            wordProperty.getProbability(), shortcutTarget.mWord,
+                            shortcutTarget.getProbability(), wordProperty.mIsBeginningOfSentence,
+                            wordProperty.mIsNotAWord, wordProperty.mIsPossiblyOffensive,
+                            0 /* timestamp */)) {
+                        MakedictLog.e("Cannot add unigram entry for " + wordProperty.mWord);
+                    }
+                }
+            } else {
+                if (!binaryDict.addUnigramEntry(wordProperty.mWord, wordProperty.getProbability(),
+                        null, 0,
+                        wordProperty.mIsBeginningOfSentence, wordProperty.mIsNotAWord,
+                        wordProperty.mIsPossiblyOffensive, 0)) {
+                    MakedictLog.e("Cannot add unigram entry for " + wordProperty.mWord);
+                }
             }
             if (binaryDict.needsToRunGC(true /* mindsBlockByGC */)) {
                 if (!binaryDict.flushWithGC()) {

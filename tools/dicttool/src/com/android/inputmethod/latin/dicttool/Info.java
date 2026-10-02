@@ -48,6 +48,15 @@ public class Info extends Dicttool.Command {
             if (wordProperty.mHasNgrams) {
                 bigramCount += wordProperty.mNgrams.size();
             }
+            if (null != wordProperty.mShortcutTargets) {
+                shortcutCount += wordProperty.mShortcutTargets.size();
+                for (WeightedString shortcutTarget : wordProperty.mShortcutTargets) {
+                    if (FormatSpec.SHORTCUT_WHITELIST_FREQUENCY
+                            == shortcutTarget.getProbability()) {
+                        ++allowlistCount;
+                    }
+                }
+            }
         }
         System.out.println("Words in the dictionary : " + wordCount);
         System.out.println("Bigram count : " + bigramCount);
