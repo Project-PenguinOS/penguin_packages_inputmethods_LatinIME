@@ -67,6 +67,12 @@ final class EmojiPalettesAdapter extends RecyclerView.Adapter<EmojiPalettesAdapt
         }
     }
 
+    public void invalidateKeyboards() {
+        for (int i = 0; i < mActiveKeyboardViews.size(); i++) {
+            mActiveKeyboardViews.valueAt(i).invalidateAllKeys();
+        }
+    }
+
     public void onPageScrolled() {
         releaseCurrentKey(false /* withKeyRegistering */);
     }

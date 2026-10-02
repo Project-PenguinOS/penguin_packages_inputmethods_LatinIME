@@ -20,9 +20,11 @@ package com.android.inputmethod.keyboard.emoji;
 import static com.android.inputmethod.latin.common.Constants.NOT_A_COORDINATE;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -33,6 +35,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,6 +55,7 @@ import com.android.inputmethod.latin.AudioAndHapticFeedbackManager;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.RichInputMethodSubtype;
 import com.android.inputmethod.latin.common.Constants;
+import com.android.inputmethod.latin.emoji.EmojiSkinTones;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
 /**
@@ -91,6 +95,9 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
     private KeyboardActionListener mKeyboardActionListener = KeyboardActionListener.EMPTY_LISTENER;
 
     private final EmojiCategory mEmojiCategory;
+    private final SharedPreferences mPrefs;
+    private FrameLayout mPagerFrame;
+    private SkinTonePicker mSkinTonePicker;
 
     public EmojiPalettesView(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.attr.emojiPalettesViewStyle);
@@ -117,8 +124,9 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         final KeyboardLayoutSet layoutSet = builder.build();
         final TypedArray emojiPalettesViewAttr = context.obtainStyledAttributes(attrs,
                 R.styleable.EmojiPalettesView, defStyle, R.style.EmojiPalettesView);
-        mEmojiCategory = new EmojiCategory(PreferenceManager.getDefaultSharedPreferences(context),
-                res, layoutSet, emojiPalettesViewAttr);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        EmojiSkinTones.init(context);
+        mEmojiCategory = new EmojiCategory(mPrefs, res, layoutSet, emojiPalettesViewAttr);
         mCategoryIndicatorEnabled = emojiPalettesViewAttr.getBoolean(
                 R.styleable.EmojiPalettesView_categoryIndicatorEnabled, false);
         mCategoryIndicatorDrawableResId = emojiPalettesViewAttr.getResourceId(
@@ -198,7 +206,9 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                // Ignore this message. Only want the actual page selected.
+                if (state != ViewPager2.SCROLL_STATE_IDLE) {
+                    dismissSkinTonePicker();
+                }
             }
 
             @Override
@@ -229,6 +239,8 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         mEmojiPager.setPersistentDrawingCache(PERSISTENT_NO_CACHE);
         mEmojiLayoutParams.setPagerProperties(mEmojiPager);
 
+        mPagerFrame = findViewById(R.id.emoji_pager_frame);
+        mSkinTonePicker = new SkinTonePicker(mPagerFrame);
         mEmojiCategoryPageIndicatorView =
                 (EmojiCategoryPageIndicatorView)findViewById(R.id.emoji_category_page_id_view);
         mEmojiCategoryPageIndicatorView.setColors(
@@ -356,6 +368,50 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         mKeyboardActionListener.onReleaseKey(code, false /* withSliding */);
     }
 
+    @Override
+    public boolean onLongPressKey(final Key key, final EmojiPageKeyboardView view) {
+        final String text = DynamicGridKeyboard.getEmojiText(key);
+        final String[] variants = EmojiSkinTones.variants(text);
+        if (variants == null || mPagerFrame == null) {
+            return false;
+        }
+        final int[] viewLocation = new int[2];
+        final int[] frameLocation = new int[2];
+        view.getLocationInWindow(viewLocation);
+        mPagerFrame.getLocationInWindow(frameLocation);
+        final int dx = viewLocation[0] - frameLocation[0] + view.getPaddingLeft();
+        final int dy = viewLocation[1] - frameLocation[1] + view.getPaddingTop();
+        final Rect keyRect = new Rect(key.getX() + dx, key.getY() + dy,
+                key.getX() + key.getWidth() + dx, key.getY() + key.getHeight() + dy);
+        AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
+                Constants.CODE_UNSPECIFIED, this);
+        mSkinTonePicker.show(keyRect, variants, Math.max(0, EmojiSkinTones.toneOf(text)),
+                this::onSkinToneChosen);
+        return true;
+    }
+
+    private void onSkinToneChosen(final String emoji) {
+        EmojiSkinTones.setPreferredTone(mPrefs, emoji, EmojiSkinTones.toneOf(emoji));
+        mEmojiCategory.updateSkinTone(emoji);
+        mEmojiPalettesAdapter.invalidateKeyboards();
+        final Key key = findOrCreateKey(emoji);
+        mKeyboardActionListener.onPressKey(
+                key.getCode(), 0, true);
+        onReleaseKey(key);
+    }
+
+    private void dismissSkinTonePicker() {
+        if (mSkinTonePicker != null) {
+            mSkinTonePicker.dismiss();
+        }
+    }
+
+    private Key findOrCreateKey(final String emoji) {
+        final Key key = mEmojiCategory.findKey(emoji);
+        return key != null ? key
+                : mEmojiCategory.getKeyboard(EmojiCategory.ID_RECENTS, 0).createKey(emoji);
+    }
+
     public void setHardwareAcceleratedDrawingEnabled(final boolean enabled) {
         if (!enabled) return;
         // TODO: Should use LAYER_TYPE_SOFTWARE when hardware acceleration is off?
@@ -392,6 +448,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
     }
 
     public void stopEmojiPalettes() {
+        dismissSkinTonePicker();
         mEmojiPalettesAdapter.releaseCurrentKey(true /* withKeyRegistering */);
         mEmojiPalettesAdapter.flushPendingRecentKeys();
         mEmojiPager.setAdapter(null);
@@ -434,6 +491,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         if (force || mTabHost.getCurrentTab() != newTabId) {
             mTabHost.setCurrentTab(newTabId);
         }
+        dismissSkinTonePicker();
     }
 
     private static class DeleteKeyOnTouchListener implements OnTouchListener {

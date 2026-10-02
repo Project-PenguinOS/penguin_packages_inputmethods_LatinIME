@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import androidx.viewpager2.widget.ViewPager2;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.android.inputmethod.latin.R;
@@ -63,7 +64,8 @@ final class EmojiLayoutParams {
     }
 
     public void setPagerProperties(final ViewPager2 vp) {
-        final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) vp.getLayoutParams();
+        final ViewGroup.MarginLayoutParams lp =
+                (ViewGroup.MarginLayoutParams) vp.getLayoutParams();
         lp.height = mEmojiKeyboardHeight;
         lp.bottomMargin = mEmojiPagerBottomMargin;
         vp.setLayoutParams(lp);

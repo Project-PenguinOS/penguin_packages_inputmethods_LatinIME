@@ -31,6 +31,7 @@ import com.android.inputmethod.keyboard.Keyboard;
 import com.android.inputmethod.keyboard.KeyboardId;
 import com.android.inputmethod.keyboard.KeyboardLayoutSet;
 import com.android.inputmethod.latin.R;
+import com.android.inputmethod.latin.emoji.EmojiSkinTones;
 import com.android.inputmethod.latin.settings.Settings;
 
 import java.util.ArrayList;
@@ -297,6 +298,43 @@ final class EmojiCategory {
         return mCurrentCategoryId == EmojiCategory.ID_RECENTS;
     }
 
+    private Key withPreferredSkinTone(final Key key) {
+        final String text = DynamicGridKeyboard.getEmojiText(key);
+        if (text == null || !EmojiSkinTones.hasSkinTones(text)) return key;
+        final String toned = EmojiSkinTones.applyPreferred(mPrefs, text);
+        return toned.equals(text) ? key : DynamicGridKeyboard.createEmojiKey(key, toned);
+    }
+
+    public void updateSkinTone(final String emoji) {
+        final String base = EmojiSkinTones.baseOf(emoji);
+        if (base == null) return;
+        final String toned = EmojiSkinTones.applyPreferred(mPrefs, base);
+        synchronized (mCategoryKeyboardMap) {
+            for (final Long mapKey : mCategoryKeyboardMap.keySet()) {
+                if ((int) (mapKey >> Integer.SIZE) == ID_RECENTS) continue;
+                final DynamicGridKeyboard kbd = mCategoryKeyboardMap.get(mapKey);
+                for (final Key key : new ArrayList<>(kbd.getSortedKeys())) {
+                    final String text = DynamicGridKeyboard.getEmojiText(key);
+                    if (text != null && !text.equals(toned)
+                            && base.equals(EmojiSkinTones.baseOf(text))) {
+                        kbd.replaceKey(key, DynamicGridKeyboard.createEmojiKey(key, toned));
+                    }
+                }
+            }
+        }
+    }
+
+    public Key findKey(final String text) {
+        synchronized (mCategoryKeyboardMap) {
+            for (final DynamicGridKeyboard kbd : mCategoryKeyboardMap.values()) {
+                for (final Key key : kbd.getSortedKeys()) {
+                    if (text.equals(DynamicGridKeyboard.getEmojiText(key))) return key;
+                }
+            }
+        }
+        return null;
+    }
+
     public int getTabIdFromCategoryId(final int categoryId) {
         for (int i = 0; i < mShownCategories.size(); ++i) {
             if (mShownCategories.get(i).mCategoryId == categoryId) {
@@ -388,7 +426,7 @@ final class EmojiCategory {
                     if (emojiKey == null) {
                         break;
                     }
-                    tempKeyboard.addKeyLast(emojiKey);
+                    tempKeyboard.addKeyLast(withPreferredSkinTone(emojiKey));
                 }
                 mCategoryKeyboardMap.put(
                         getCategoryKeyboardMapKey(categoryId, pageId), tempKeyboard);

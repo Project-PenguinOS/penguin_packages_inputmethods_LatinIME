@@ -44,6 +44,7 @@ final class EmojiPageKeyboardView extends KeyboardView implements
     public interface OnKeyEventListener {
         public void onPressKey(Key key);
         public void onReleaseKey(Key key);
+        public boolean onLongPressKey(Key key, EmojiPageKeyboardView view);
     }
 
     private static final OnKeyEventListener EMPTY_LISTENER = new OnKeyEventListener() {
@@ -51,6 +52,10 @@ final class EmojiPageKeyboardView extends KeyboardView implements
         public void onPressKey(final Key key) {}
         @Override
         public void onReleaseKey(final Key key) {}
+        @Override
+        public boolean onLongPressKey(final Key key, final EmojiPageKeyboardView view) {
+            return false;
+        }
     };
 
     private OnKeyEventListener mListener = EMPTY_LISTENER;
@@ -66,7 +71,7 @@ final class EmojiPageKeyboardView extends KeyboardView implements
             final int defStyle) {
         super(context, attrs, defStyle);
         mGestureDetector = new GestureDetector(context, this);
-        mGestureDetector.setIsLongpressEnabled(false /* isLongpressEnabled */);
+        mGestureDetector.setIsLongpressEnabled(true /* isLongpressEnabled */);
         mHandler = new Handler();
     }
 
@@ -116,6 +121,18 @@ final class EmojiPageKeyboardView extends KeyboardView implements
      */
     @Override
     public boolean onTouchEvent(final MotionEvent e) {
+        final int action = e.getActionMasked();
+        if (mLongPressedKey != null
+                && (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL)) {
+            final Key key = mLongPressedKey;
+            mLongPressedKey = null;
+            mGestureDetector.onTouchEvent(e);
+            releaseCurrentKey(action == MotionEvent.ACTION_UP && key == mCurrentKey);
+            return true;
+        }
+        if (action == MotionEvent.ACTION_DOWN) {
+            mLongPressedKey = null;
+        }
         if (mGestureDetector.onTouchEvent(e)) {
             return true;
         }
@@ -128,6 +145,7 @@ final class EmojiPageKeyboardView extends KeyboardView implements
 
     // {@link GestureEnabler#OnGestureListener} methods.
     private Key mCurrentKey;
+    private Key mLongPressedKey;
     private Runnable mPendingKeyDown;
     private final Handler mHandler;
 
@@ -228,6 +246,18 @@ final class EmojiPageKeyboardView extends KeyboardView implements
 
     @Override
     public void onLongPress(final MotionEvent e) {
-        // Long press detection of {@link #mGestureDetector} is disabled and not used.
+        final Key key = mCurrentKey;
+        if (key == null) {
+            return;
+        }
+        if (mPendingKeyDown != null) {
+            mHandler.removeCallbacks(mPendingKeyDown);
+            callListenerOnPressKey(key);
+        }
+        if (mListener.onLongPressKey(key, this)) {
+            releaseCurrentKey(false);
+        } else {
+            mLongPressedKey = key;
+        }
     }
 }

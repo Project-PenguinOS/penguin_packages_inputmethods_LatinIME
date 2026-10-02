@@ -869,6 +869,14 @@ public class Key implements Comparable<Key> {
         return mVerticalGap;
     }
 
+    public int getLabelFlags() {
+        return mLabelFlags;
+    }
+
+    public int getBackgroundType() {
+        return mBackgroundType;
+    }
+
     /**
      * Gets the x-coordinate of the top-left corner of the key in pixels, excluding the gap.
      * @return The x-coordinate of the top-left corner of the key in pixels, excluding the gap.

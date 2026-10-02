@@ -22,6 +22,9 @@ import android.util.Log;
 
 import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.keyboard.Keyboard;
+import com.android.inputmethod.keyboard.internal.KeyboardIconsSet;
+import com.android.inputmethod.latin.common.Constants;
+import com.android.inputmethod.latin.emoji.EmojiSkinTones;
 import com.android.inputmethod.latin.settings.Settings;
 import com.android.inputmethod.latin.utils.JsonUtils;
 
@@ -51,11 +54,14 @@ final class DynamicGridKeyboard extends Keyboard {
 
     private List<Key> mCachedGridKeys;
 
+    private final Key mTemplateKey;
+
     public DynamicGridKeyboard(final SharedPreferences prefs, final Keyboard templateKeyboard,
             final int maxKeyCount, final int categoryId) {
         super(templateKeyboard);
         final Key key0 = getTemplateKey(TEMPLATE_KEY_CODE_0);
         final Key key1 = getTemplateKey(TEMPLATE_KEY_CODE_1);
+        mTemplateKey = key0;
         mHorizontalStep = Math.abs(key1.getX() - key0.getX());
         mVerticalStep = key0.getHeight() + mVerticalGap;
         mColumnsNum = mBaseWidth / mHorizontalStep;
@@ -117,16 +123,68 @@ final class DynamicGridKeyboard extends Keyboard {
             while (mGridKeys.size() > mMaxKeyCount) {
                 mGridKeys.removeLast();
             }
-            int index = 0;
-            for (final GridKey gridKey : mGridKeys) {
-                final int keyX0 = getKeyX0(index);
-                final int keyY0 = getKeyY0(index);
-                final int keyX1 = getKeyX1(index);
-                final int keyY1 = getKeyY1(index);
-                gridKey.updateCoordinates(keyX0, keyY0, keyX1, keyY1);
-                index++;
-            }
+            updateCoordinates();
         }
+    }
+
+    private void updateCoordinates() {
+        int index = 0;
+        for (final GridKey gridKey : mGridKeys) {
+            final int keyX0 = getKeyX0(index);
+            final int keyY0 = getKeyY0(index);
+            final int keyX1 = getKeyX1(index);
+            final int keyY1 = getKeyY1(index);
+            gridKey.updateCoordinates(keyX0, keyY0, keyX1, keyY1);
+            index++;
+        }
+    }
+
+    public boolean replaceKey(final Key oldKey, final Key newKey) {
+        synchronized (mLock) {
+            final ArrayList<GridKey> keys = new ArrayList<>(mGridKeys);
+            boolean found = false;
+            for (int i = 0; i < keys.size(); i++) {
+                if (keys.get(i).equals(oldKey)) {
+                    keys.set(i, new GridKey(newKey));
+                    found = true;
+                }
+            }
+            if (!found) return false;
+            mGridKeys.clear();
+            mGridKeys.addAll(keys);
+            mCachedGridKeys = null;
+            updateCoordinates();
+            return true;
+        }
+    }
+
+    public Key createKey(final String text) {
+        return createEmojiKey(mTemplateKey, text);
+    }
+
+    public static String getEmojiText(final Key key) {
+        final String outputText = key.getOutputText();
+        if (outputText != null) return outputText;
+        if (key.getCode() > 0) return new String(Character.toChars(key.getCode()));
+        return key.getLabel();
+    }
+
+    public static Key createEmojiKey(final Key like, final String text) {
+        final int code;
+        final String outputText;
+        if (Character.charCount(text.codePointAt(0)) == text.length()) {
+            code = text.codePointAt(0);
+            outputText = null;
+        } else {
+            code = Constants.CODE_OUTPUT_TEXT;
+            outputText = text;
+        }
+        final int hGap = like.getHorizontalGap();
+        final int vGap = like.getVerticalGap();
+        return new Key(text, KeyboardIconsSet.ICON_UNDEFINED, code, outputText,
+                null, like.getLabelFlags(), like.getBackgroundType(),
+                like.getX() - hGap / 2, like.getY(), like.getWidth() + hGap,
+                like.getHeight() + vGap, hGap, vGap);
     }
 
     private void saveRecentKeys() {
@@ -176,7 +234,9 @@ final class DynamicGridKeyboard extends Keyboard {
                 key = getKeyByCode(keyboards, code);
             } else if (o instanceof String) {
                 final String outputText = (String)o;
-                key = getKeyByOutputText(keyboards, outputText);
+                final Key found = getKeyByOutputText(keyboards, outputText);
+                key = found == null && EmojiSkinTones.hasSkinTones(outputText)
+                        ? createKey(outputText) : found;
             } else {
                 Log.w(TAG, "Invalid object: " + o);
                 continue;

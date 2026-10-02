@@ -60,11 +60,16 @@
         </TabHost>
         <include layout="@layout/suggestion_divider" />
     </LinearLayout>
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/emoji_keyboard_pager"
+    <FrameLayout
+        android:id="@+id/emoji_pager_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_height="wrap_content">
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/emoji_keyboard_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </FrameLayout>
     <com.android.inputmethod.keyboard.emoji.EmojiCategoryPageIndicatorView
         android:id="@+id/emoji_category_page_id_view"
         android:layout_width="match_parent"
