@@ -51,7 +51,8 @@ final class EmojiCategory {
     private static final int ID_NATURE = 3;
     private static final int ID_PLACES = 4;
     private static final int ID_SYMBOLS = 5;
-    private static final int ID_EMOTICONS = 6;
+    static final int ID_EMOTICONS = 6;
+    private static final int EMOTICONS_COLUMNS = 4;
     private static final int ID_FLAGS = 7;
     private static final int ID_EIGHT_SMILEY_PEOPLE = 8;
     private static final int ID_EIGHT_ANIMALS_NATURE = 9;
@@ -298,6 +299,21 @@ final class EmojiCategory {
         return mCurrentCategoryId == EmojiCategory.ID_RECENTS;
     }
 
+    public boolean isInEmoticonsTab() {
+        return mCurrentCategoryId == EmojiCategory.ID_EMOTICONS;
+    }
+
+    private int getColumns(final int categoryId) {
+        return categoryId == ID_EMOTICONS ? EMOTICONS_COLUMNS : 0;
+    }
+
+    private int getMaxPageKeyCount(final int categoryId) {
+        if (categoryId == ID_EMOTICONS) {
+            return mMaxPageKeyCount / 8 * EMOTICONS_COLUMNS;
+        }
+        return mMaxPageKeyCount;
+    }
+
     private Key withPreferredSkinTone(final Key key) {
         final String text = DynamicGridKeyboard.getEmojiText(key);
         if (text == null || !EmojiSkinTones.hasSkinTones(text)) return key;
@@ -367,7 +383,7 @@ final class EmojiCategory {
 
     private int getCategoryPageCount(final int categoryId) {
         final Keyboard keyboard = mLayoutSet.getKeyboard(sCategoryElementId[categoryId]);
-        return (keyboard.getSortedKeys().size() - 1) / mMaxPageKeyCount + 1;
+        return (keyboard.getSortedKeys().size() - 1) / getMaxPageKeyCount(categoryId) + 1;
     }
 
     // Returns a pair of the category id and the category page id from the view pager's page
@@ -416,12 +432,13 @@ final class EmojiCategory {
             }
 
             final Keyboard keyboard = mLayoutSet.getKeyboard(sCategoryElementId[categoryId]);
+            final int maxPageKeyCount = getMaxPageKeyCount(categoryId);
             final Key[][] sortedKeys = sortKeysIntoPages(
-                    keyboard.getSortedKeys(), mMaxPageKeyCount);
+                    keyboard.getSortedKeys(), maxPageKeyCount);
             for (int pageId = 0; pageId < sortedKeys.length; ++pageId) {
                 final DynamicGridKeyboard tempKeyboard = new DynamicGridKeyboard(mPrefs,
                         mLayoutSet.getKeyboard(KeyboardId.ELEMENT_EMOJI_RECENTS),
-                        mMaxPageKeyCount, categoryId);
+                        maxPageKeyCount, categoryId, getColumns(categoryId));
                 for (final Key emojiKey : sortedKeys[pageId]) {
                     if (emojiKey == null) {
                         break;

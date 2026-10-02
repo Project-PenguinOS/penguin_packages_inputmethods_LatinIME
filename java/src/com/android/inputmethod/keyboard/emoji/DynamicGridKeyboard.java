@@ -58,13 +58,23 @@ final class DynamicGridKeyboard extends Keyboard {
 
     public DynamicGridKeyboard(final SharedPreferences prefs, final Keyboard templateKeyboard,
             final int maxKeyCount, final int categoryId) {
+        this(prefs, templateKeyboard, maxKeyCount, categoryId, 0);
+    }
+
+    public DynamicGridKeyboard(final SharedPreferences prefs, final Keyboard templateKeyboard,
+            final int maxKeyCount, final int categoryId, final int columns) {
         super(templateKeyboard);
         final Key key0 = getTemplateKey(TEMPLATE_KEY_CODE_0);
         final Key key1 = getTemplateKey(TEMPLATE_KEY_CODE_1);
         mTemplateKey = key0;
-        mHorizontalStep = Math.abs(key1.getX() - key0.getX());
+        if (columns > 0) {
+            mHorizontalStep = mBaseWidth / columns;
+            mColumnsNum = columns;
+        } else {
+            mHorizontalStep = Math.abs(key1.getX() - key0.getX());
+            mColumnsNum = mBaseWidth / mHorizontalStep;
+        }
         mVerticalStep = key0.getHeight() + mVerticalGap;
-        mColumnsNum = mBaseWidth / mHorizontalStep;
         mMaxKeyCount = maxKeyCount;
         mIsRecents = categoryId == EmojiCategory.ID_RECENTS;
         mPrefs = prefs;

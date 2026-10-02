@@ -108,20 +108,53 @@
         name="emoji_emoticons"
         format="string"
     >
-        <item>=-O</item>
-        <item>:-P</item>
-        <item>;-)</item>
-        <item>:-(</item>
-        <item>:-)</item>
-        <item>:-!</item>
-        <item>:-$</item>
-        <item>B-)</item>
+        <item>:)</item>
+        <item>:(</item>
+        <item>:D</item>
+        <item>;)</item>
+        <item>:P</item>
         <item>:O</item>
-        <item>:-*</item>
-        <item>:-D</item>
+        <item>:/</item>
         <item>:\'(</item>
-        <item>:-\\</item>
-        <item>O:-)</item>
-        <item>:-[</item>
+        <item>XD</item>
+        <item>&lt;3</item>
+        <item>&lt;/3</item>
+        <item>^_^</item>
+        <item>^^</item>
+        <item>-_-</item>
+        <item>o_O</item>
+        <item>T_T</item>
+        <item>&gt;_&lt;</item>
+        <item>¯\\_(ツ)_/¯</item>
+        <item>(╯°□°)╯︵ ┻━┻</item>
+        <item>┬─┬ノ( º _ ºノ)</item>
+        <item>( ͡° ͜ʖ ͡°)</item>
+        <item>ʕ•ᴥ•ʔ</item>
+        <item>(◕‿◕)</item>
+        <item>(｡◕‿◕｡)</item>
+        <item>(☞ﾟヮﾟ)☞</item>
+        <item>☜(ﾟヮﾟ☜)</item>
+        <item>(づ｡◕‿‿◕｡)づ</item>
+        <item>ᕦ(ò_óˇ)ᕤ</item>
+        <item>(ಥ﹏ಥ)</item>
+        <item>ಠ_ಠ</item>
+        <item>(ノ◕ヮ◕)ノ*:･ﾟ✧</item>
+        <item>(•_•)</item>
+        <item>( •_•)&gt;⌐■-■</item>
+        <item>(⌐■_■)</item>
+        <item>(✿◠‿◠)</item>
+        <item>(¬‿¬)</item>
+        <item>(≧▽≦)</item>
+        <item>(╥﹏╥)</item>
+        <item>\\(^o^)/</item>
+        <item>(*^‿^*)</item>
+        <item>( ˘ ³˘)♥</item>
+        <item>(ʘ‿ʘ)</item>
+        <item>ヽ(`Д´)ﾉ</item>
+        <item>(-‿-)zzZ</item>
+        <item>(っ˘ڡ˘ς)</item>
+        <item>(ᵔᴥᵔ)</item>
+        <item>(°ロ°)☝</item>
+        <item>♪~ ᕕ(ᐛ)ᕗ</item>
     </array>
 </resources>
