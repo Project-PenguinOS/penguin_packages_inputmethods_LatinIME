@@ -88,6 +88,7 @@ import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.common.CoordinateUtils;
 import com.android.inputmethod.latin.common.InputPointers;
 import com.android.inputmethod.latin.define.DebugFlags;
+import com.android.inputmethod.latin.emoji.EmojiSuggestions;
 import com.android.inputmethod.latin.glass.ClipboardHistory;
 import com.android.inputmethod.latin.glass.Dictation;
 import com.android.inputmethod.latin.glass.FloatingKeyboard;
@@ -648,6 +649,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             if (keyboardView != null) keyboardView.onWindowShown();
         });
         mEmojiSearch = new EmojiSearchController(mEmojiSearchHost);
+        EmojiSuggestions.init(this);
 
         mHandler.onCreate();
 

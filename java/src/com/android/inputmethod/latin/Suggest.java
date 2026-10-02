@@ -23,6 +23,7 @@ import static com.android.inputmethod.latin.define.DecoderSpecificConstants.SHOU
 
 import com.android.inputmethod.keyboard.Keyboard;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
+import com.android.inputmethod.latin.emoji.EmojiSuggestions;
 import com.android.inputmethod.latin.common.ComposedData;
 import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.common.StringUtils;
@@ -285,10 +286,13 @@ public final class Suggest {
 
         final boolean isTypedWordValid = firstOcurrenceOfTypedWordInSuggestions > -1
                 || (!resultsArePredictions && !allowsToBeAutoCorrected);
+        final boolean willAutoCorrect = resultsArePredictions ? hasAutoCorrection
+                : EmojiSuggestions.addTo(suggestionsList, consideredWord, locale,
+                        hasAutoCorrection);
         callback.onGetSuggestedWords(new SuggestedWords(suggestionsList,
                 suggestionResults.mRawSuggestions, typedWordInfo,
                 isTypedWordValid,
-                hasAutoCorrection /* willAutoCorrect */,
+                willAutoCorrect,
                 false /* isObsoleteSuggestions */, inputStyle, sequenceNumber));
     }
 
