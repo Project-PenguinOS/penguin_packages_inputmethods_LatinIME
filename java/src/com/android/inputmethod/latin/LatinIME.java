@@ -714,6 +714,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         if (mClipboardHistory != null) {
             mClipboardHistory.setEnabled(currentSettingsValues.mClipboardHistoryEnabled);
         }
+        EmojiSuggestions.setEnabled(currentSettingsValues.mEmojiSuggestionsEnabled);
         // This method is called on startup and language switch, before the new layout has
         // been displayed. Opening dictionaries never affects responsivity as dictionaries are
         // asynchronously loaded.

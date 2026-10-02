@@ -49,6 +49,12 @@
         android:defaultValue="true"
         android:persistent="true" />
     <CheckBoxPreference
+        android:key="pref_emoji_suggestions"
+        android:title="@string/glass_settings_emoji_suggestions"
+        android:summary="@string/glass_settings_emoji_suggestions_summary"
+        android:defaultValue="true"
+        android:persistent="true" />
+    <CheckBoxPreference
         android:key="pref_show_toolbar"
         android:title="@string/glass_settings_toolbar"
         android:summary="@string/glass_settings_toolbar_summary"
