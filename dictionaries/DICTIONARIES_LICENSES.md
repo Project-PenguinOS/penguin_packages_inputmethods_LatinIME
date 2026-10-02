@@ -21,6 +21,37 @@ top-level `NOTICE` file).
 Notes:
 - `main_sr` is Cyrillic. The `sr_ZZ` (Serbian Latin) subtype falls back to it
   because there is no `main_sr_zz`, so it gives no useful suggestions there.
-- Dictionaries for Indian languages and Hinglish are not bundled yet.
-  Third-party dictionaries added later must be listed here with their
-  upstream source and license.
+- Third-party dictionaries must be listed below with their upstream source
+  and license.
+
+## Third-party dictionaries (Indian languages)
+
+Prebuilt `.dict` files (format v202) downloaded unmodified from the HeliBoard
+dictionary repository, https://codeberg.org/Helium314/aosp-dictionaries
+(`dictionaries/main_<lang>.dict`, retrieved 2026-10-03). The word lists they
+were built from are in that repository's `wordlists/` directory.
+
+| Resource | Language | Upstream source | License |
+|---|---|---|---|
+| main_bn | Bangla | `wordlists/main_bn.source`: Leipzig Corpora Collection word lists, proofread (https://wortschatz.uni-leipzig.de/en/download) | CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/) |
+| main_hi | Hindi | https://gitlab.com/indicproject/dictionaries (`hi_wordlist.combined`) | GPLv2 |
+| main_ta | Tamil | indicproject dictionaries (`wordlists/main_ta.source`) | GPLv2 |
+| main_te | Telugu | indicproject dictionaries (`wordlists/main_te.source`) | GPLv2 |
+| main_mr | Marathi | indicproject dictionaries (`wordlists/main_mr.source`) | GPLv2 |
+| main_kn | Kannada | indicproject dictionaries (`wordlists/main_kn.source`) | GPLv2 |
+| main_ml | Malayalam | indicproject dictionaries (`wordlists/main_ml.source`) | GPLv2 |
+| main_gu | Gujarati | indicproject dictionaries (`wordlists/main_gu.source`) | GPLv2 |
+| main_pa | Punjabi | indicproject dictionaries (`wordlists/main_pa.source`) | GPLv2 |
+| main_ur | Urdu | indicproject dictionaries (`wordlists/main_ur.source`) | GPLv2 |
+
+The GPLv2 dictionaries are separate data files read by the keyboard at run
+time; their license text is in `dictionaries/GPL-2.0.txt` and the
+corresponding source (the word lists) is available at the URLs above.
+Bangla attribution: word lists © Leipzig Corpora Collection, CC BY 4.0;
+proofread and compiled by the HeliBoard dictionary contributors.
+
+Notes:
+- Gujarati, Punjabi and Urdu have no keyboard layout/subtype yet, so their
+  dictionaries are only used once such a subtype exists.
+- Hinglish (`hi_ZZ`) is not bundled: the only available word list has no
+  stated license.
