@@ -59,7 +59,8 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "java/proguard.flags")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "java/proguard.flags",
+                "proguard-gradle.pro")
             signingConfig = signingConfigs.findByName("penguin") ?: signingConfigs.getByName("debug")
         }
         debug {
