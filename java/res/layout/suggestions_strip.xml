@@ -78,6 +78,11 @@
             android:contentDescription="@string/glass_toolbar_one_handed"
             android:src="@drawable/ic_f7_hand_point_right" />
         <ImageButton
+            android:id="@+id/glass_toolbar_theme"
+            style="@style/GlassToolbarButton"
+            android:contentDescription="@string/glass_toolbar_theme"
+            android:src="@drawable/ic_f7_paintbrush" />
+        <ImageButton
             android:id="@+id/glass_toolbar_settings"
             style="@style/GlassToolbarButton"
             android:contentDescription="@string/glass_toolbar_settings"

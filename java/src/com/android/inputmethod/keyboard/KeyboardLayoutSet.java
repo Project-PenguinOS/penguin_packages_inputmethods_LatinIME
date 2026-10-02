@@ -120,6 +120,7 @@ public final class KeyboardLayoutSet {
         boolean mNoSettingsKey;
         boolean mNumberRowEnabled;
         boolean mNumberRowPasswordEnabled; // implied if mNumberRowEnabled
+        boolean mPunctuationKeysEnabled;
         boolean mLanguageSwitchKeyEnabled;
         boolean mEmojiKeyEnabled;
         RichInputMethodSubtype mSubtype;
@@ -322,6 +323,11 @@ public final class KeyboardLayoutSet {
 
         public Builder setVoiceInputKeyEnabled(final boolean enabled) {
             mParams.mVoiceInputKeyEnabled = enabled;
+            return this;
+        }
+
+        public Builder setPunctuationKeysEnabled(final boolean enabled) {
+            mParams.mPunctuationKeysEnabled = enabled;
             return this;
         }
 

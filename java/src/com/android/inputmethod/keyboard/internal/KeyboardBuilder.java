@@ -665,6 +665,8 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
                     R.styleable.Keyboard_Case_hasShortcutKey, id.mHasShortcutKey);
             final boolean numberRowEnabledMatched = matchBoolean(caseAttr,
                     R.styleable.Keyboard_Case_numberRowEnabled, id.mNumberRowEnabled);
+            final boolean punctuationKeysEnabledMatched = matchBoolean(caseAttr,
+                    R.styleable.Keyboard_Case_punctuationKeysEnabled, id.mPunctuationKeysEnabled);
             final boolean languageSwitchKeyEnabledMatched = matchBoolean(caseAttr,
                     R.styleable.Keyboard_Case_languageSwitchKeyEnabled,
                     id.mLanguageSwitchKeyEnabled);
@@ -687,6 +689,7 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
                     && keyboardThemeMacthed && modeMatched && navigateNextMatched
                     && navigatePreviousMatched && passwordInputMatched && clobberSettingsKeyMatched
                     && hasShortcutKeyMatched  && numberRowEnabledMatched
+                    && punctuationKeysEnabledMatched
                     && languageSwitchKeyEnabledMatched && emojiKeyEnabledMatched
                     && isMultiLineMatched && imeActionMatched && isIconDefinedMatched
                     && localeCodeMatched && languageCodeMatched && countryCodeMatched

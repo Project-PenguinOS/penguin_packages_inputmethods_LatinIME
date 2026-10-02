@@ -78,6 +78,7 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
     private boolean mDictating;
     private boolean mToolbarEnabled = true;
     private boolean mToolbarForced;
+    private boolean mIncognito;
     private CharSequence mClipChipText;
     MainKeyboardView mMainKeyboardView;
 
@@ -162,7 +163,8 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
             }
         };
         for (final int id : new int[] { R.id.glass_toolbar_clipboard, R.id.glass_toolbar_edit,
-                R.id.glass_toolbar_one_handed, R.id.glass_toolbar_settings,
+                R.id.glass_toolbar_one_handed, R.id.glass_toolbar_theme,
+                R.id.glass_toolbar_settings,
                 R.id.glass_toolbar_hide, R.id.glass_clip_chip }) {
             findViewById(id).setOnClickListener(toolbarClick);
         }
@@ -246,8 +248,20 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
         mDictationStatus.setVisibility(mDictating ? VISIBLE : GONE);
         mGridButton.setVisibility(mToolbarEnabled && !mDictating ? VISIBLE : GONE);
         mGridButton.setActivated(mToolbarForced);
-        mGridButton.setImageResource(mToolbarForced
-                ? R.drawable.ic_f7_square_grid_2x2_fill : R.drawable.ic_f7_square_grid_2x2);
+        if (mIncognito) {
+            mGridButton.setImageResource(R.drawable.ic_f7_eye_slash_fill);
+            mGridButton.setContentDescription(getResources().getString(R.string.glass_incognito));
+        } else {
+            mGridButton.setImageResource(mToolbarForced
+                    ? R.drawable.ic_f7_square_grid_2x2_fill : R.drawable.ic_f7_square_grid_2x2);
+            mGridButton.setContentDescription(
+                    getResources().getString(R.string.glass_toolbar_more));
+        }
+    }
+
+    public void setIncognito(final boolean incognito) {
+        mIncognito = incognito;
+        updateToolbarVisibility();
     }
 
     public void setDictating(final boolean dictating) {

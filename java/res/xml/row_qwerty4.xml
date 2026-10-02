@@ -2,30 +2,53 @@
 <merge
     xmlns:latin="http://schemas.android.com/apk/res-auto"
 >
-    <Row
-        latin:keyWidth="10%p"
-    >
-        <Key
-            latin:keyStyle="toSymbolKeyStyle"
-            latin:keyWidth="25%p" />
-        <switch>
-            <case
-                latin:keyboardLayoutSet="bengali_akkhor|farsi|kannada|nepali_romanized|nepali_traditional|telugu"
+    <switch>
+        <case latin:punctuationKeysEnabled="true">
+            <Row
+                latin:keyWidth="10%p"
             >
                 <Key
-                    latin:keyStyle="spaceKeyStyle"
-                    latin:keyWidth="40%p" />
-                <Key
-                    latin:keyStyle="zwnjKeyStyle" />
-            </case>
-            <default>
+                    latin:keyStyle="toSymbolKeyStyle"
+                    latin:keyWidth="17.5%p" />
+                <include
+                    latin:keyboardLayout="@xml/key_comma" />
                 <Key
                     latin:keyStyle="spaceKeyStyle"
-                    latin:keyWidth="50%p" />
-            </default>
-        </switch>
-        <Key
-            latin:keyStyle="enterKeyStyle"
-            latin:keyWidth="fillRight" />
-    </Row>
+                    latin:keyWidth="45%p" />
+                <include
+                    latin:keyboardLayout="@xml/key_period" />
+                <Key
+                    latin:keyStyle="enterKeyStyle"
+                    latin:keyWidth="fillRight" />
+            </Row>
+        </case>
+        <default>
+            <Row
+                latin:keyWidth="10%p"
+            >
+                <Key
+                    latin:keyStyle="toSymbolKeyStyle"
+                    latin:keyWidth="25%p" />
+                <switch>
+                    <case
+                        latin:keyboardLayoutSet="bengali_akkhor|farsi|kannada|nepali_romanized|nepali_traditional|telugu"
+                    >
+                        <Key
+                            latin:keyStyle="spaceKeyStyle"
+                            latin:keyWidth="40%p" />
+                        <Key
+                            latin:keyStyle="zwnjKeyStyle" />
+                    </case>
+                    <default>
+                        <Key
+                            latin:keyStyle="spaceKeyStyle"
+                            latin:keyWidth="50%p" />
+                    </default>
+                </switch>
+                <Key
+                    latin:keyStyle="enterKeyStyle"
+                    latin:keyWidth="fillRight" />
+            </Row>
+        </default>
+    </switch>
 </merge>

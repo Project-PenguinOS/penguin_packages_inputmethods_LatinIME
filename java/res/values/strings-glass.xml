@@ -6,6 +6,8 @@
     <string name="glass_toolbar_text_editing">Text editing</string>
     <string name="glass_toolbar_one_handed">One-handed mode</string>
     <string name="glass_toolbar_settings">Keyboard settings</string>
+    <string name="glass_toolbar_theme">Themes</string>
+    <string name="glass_incognito">Incognito: nothing you type here is learned</string>
     <string name="glass_toolbar_hide_keyboard">Hide keyboard</string>
     <string name="glass_paste_chip_description">Paste %s</string>
     <string name="glass_clipboard_title">Clipboard</string>
@@ -37,6 +39,8 @@
     <string name="glass_settings_clipboard_history">Clipboard history</string>
     <string name="glass_settings_clipboard_history_summary">Keep recently copied text for one hour; pinned items are kept</string>
     <string name="glass_settings_clipboard_suggestion">Suggest recently copied text</string>
+    <string name="glass_settings_punctuation_keys">Comma and period keys</string>
+    <string name="glass_settings_punctuation_keys_summary">Show , and . beside the space bar, like Gboard</string>
     <string name="glass_settings_toolbar">Show toolbar</string>
     <string name="glass_settings_toolbar_summary">Clipboard, text editing and more above the keys when there are no suggestions</string>
 </resources>

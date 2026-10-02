@@ -79,6 +79,7 @@ public final class KeyboardId {
     public final EditorInfo mEditorInfo;
     public final boolean mClobberSettingsKey;
     public final boolean mNumberRowEnabled;
+    public final boolean mPunctuationKeysEnabled;
     public final boolean mLanguageSwitchKeyEnabled;
     public final boolean mEmojiKeyEnabled;
     public final String mCustomActionLabel;
@@ -97,6 +98,7 @@ public final class KeyboardId {
         mClobberSettingsKey = params.mNoSettingsKey;
         mNumberRowEnabled = params.mNumberRowEnabled ||
                 (params.mNumberRowPasswordEnabled && params.mIsPasswordField);
+        mPunctuationKeysEnabled = params.mPunctuationKeysEnabled;
         mLanguageSwitchKeyEnabled = params.mLanguageSwitchKeyEnabled;
         mEmojiKeyEnabled = params.mEmojiKeyEnabled;
         mCustomActionLabel = (mEditorInfo.actionLabel != null)
@@ -116,6 +118,7 @@ public final class KeyboardId {
                 id.passwordInput(),
                 id.mClobberSettingsKey,
                 id.mNumberRowEnabled,
+                id.mPunctuationKeysEnabled,
                 id.mHasShortcutKey,
                 id.mLanguageSwitchKeyEnabled,
                 id.mEmojiKeyEnabled,
@@ -139,6 +142,7 @@ public final class KeyboardId {
                 && other.passwordInput() == passwordInput()
                 && other.mClobberSettingsKey == mClobberSettingsKey
                 && other.mNumberRowEnabled == mNumberRowEnabled
+                && other.mPunctuationKeysEnabled == mPunctuationKeysEnabled
                 && other.mHasShortcutKey == mHasShortcutKey
                 && other.mLanguageSwitchKeyEnabled == mLanguageSwitchKeyEnabled
                 && other.mEmojiKeyEnabled == mEmojiKeyEnabled

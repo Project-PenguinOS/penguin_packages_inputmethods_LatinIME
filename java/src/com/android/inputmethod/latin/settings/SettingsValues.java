@@ -71,6 +71,7 @@ public class SettingsValues {
     public final boolean mShowNumberRowPassword;
     public final boolean mShowLongpressHints;
     public final boolean mShowToolbar;
+    public final boolean mShowPunctuationKeys;
     public final boolean mClipboardHistoryEnabled;
     public final boolean mClipboardSuggestionEnabled;
     public final int mOneHandedMode;
@@ -153,6 +154,7 @@ public class SettingsValues {
         mShowNumberRowPassword = prefs.getBoolean(Settings.PREF_SHOW_NUMBER_ROW_PASSWORD, false);
         mShowLongpressHints = prefs.getBoolean(Settings.PREF_SHOW_LONGPRESS_HINTS, true);
         mShowToolbar = prefs.getBoolean(Settings.PREF_SHOW_TOOLBAR, true);
+        mShowPunctuationKeys = prefs.getBoolean(Settings.PREF_SHOW_PUNCTUATION_KEYS, false);
         mClipboardHistoryEnabled = prefs.getBoolean(Settings.PREF_CLIPBOARD_HISTORY, true);
         mClipboardSuggestionEnabled = prefs.getBoolean(Settings.PREF_CLIPBOARD_SUGGESTION, true);
         mOneHandedMode = prefs.getInt(Settings.PREF_ONE_HANDED_MODE, Settings.ONE_HANDED_OFF);

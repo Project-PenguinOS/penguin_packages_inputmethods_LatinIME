@@ -51,8 +51,10 @@ public final class TextEditPanelView extends LinearLayout {
                 KeyEvent.KEYCODE_MOVE_HOME), cellParams(1f));
         bottom.addView(repeatKey(context, R.drawable.ic_f7_arrow_right_to_line, R.string.glass_edit_end,
                 KeyEvent.KEYCODE_MOVE_END), cellParams(1f));
-        bottom.addView(actionKey(context, R.string.glass_edit_cut, android.R.id.cut),
-                cellParams(1f));
+        bottom.addView(iconActionKey(context, R.drawable.ic_f7_arrow_uturn_left,
+                R.string.glass_edit_undo, android.R.id.undo), cellParams(1f));
+        bottom.addView(iconActionKey(context, R.drawable.ic_f7_arrow_uturn_right,
+                R.string.glass_edit_redo, android.R.id.redo), cellParams(1f));
         pad3.addView(bottom, groupParams());
         addView(pad3, new LayoutParams(0, LayoutParams.MATCH_PARENT, 2.2f));
 
@@ -61,11 +63,14 @@ public final class TextEditPanelView extends LinearLayout {
                 rowParams());
         actions.addView(actionKey(context, R.string.glass_edit_copy, android.R.id.copy),
                 rowParams());
-        actions.addView(actionKey(context, R.string.glass_edit_paste, android.R.id.paste),
+        actions.addView(actionKey(context, R.string.glass_edit_cut, android.R.id.cut),
                 rowParams());
-        final ImageButton delete = repeatKey(context, R.drawable.ic_f7_delete_left,
-                R.string.spoken_description_delete, KeyEvent.KEYCODE_DEL);
-        actions.addView(delete, rowParams());
+        final LinearLayout pasteRow = row(context);
+        pasteRow.addView(actionKey(context, R.string.glass_edit_paste, android.R.id.paste),
+                cellParams(1.4f));
+        pasteRow.addView(repeatKey(context, R.drawable.ic_f7_delete_left,
+                R.string.spoken_description_delete, KeyEvent.KEYCODE_DEL), cellParams(1f));
+        actions.addView(pasteRow, groupParams());
         addView(actions, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
     }
 
@@ -91,6 +96,17 @@ public final class TextEditPanelView extends LinearLayout {
             if (actionId != android.R.id.selectAll) {
                 setSelecting(false);
             }
+        });
+        return key;
+    }
+
+    private ImageButton iconActionKey(final Context context, final int iconRes,
+            final int descriptionRes, final int actionId) {
+        final ImageButton key = GlassUi.iconKey(context, iconRes,
+                context.getString(descriptionRes));
+        key.setOnClickListener(v -> {
+            mHost.performFeedback(v);
+            mHost.performContextMenuAction(actionId);
         });
         return key;
     }

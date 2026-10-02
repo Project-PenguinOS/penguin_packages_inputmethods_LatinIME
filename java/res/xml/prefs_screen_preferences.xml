@@ -37,6 +37,12 @@
         android:defaultValue="false"
         android:persistent="true" />
     <CheckBoxPreference
+        android:key="pref_show_punctuation_keys"
+        android:title="@string/glass_settings_punctuation_keys"
+        android:summary="@string/glass_settings_punctuation_keys_summary"
+        android:defaultValue="false"
+        android:persistent="true" />
+    <CheckBoxPreference
         android:key="pref_show_longpress_hints"
         android:title="@string/show_longpress_hints"
         android:summary="@string/show_longpress_hints_summary"

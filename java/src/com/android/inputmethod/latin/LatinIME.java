@@ -817,6 +817,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             requestHideSelf(0);
         } else if (viewId == R.id.glass_toolbar_settings) {
             launchSettings(SettingsActivity.EXTRA_ENTRY_VALUE_LONG_PRESS_COMMA);
+        } else if (viewId == R.id.glass_toolbar_theme) {
+            launchThemeSettings();
         } else if (viewId == R.id.glass_toolbar_clipboard) {
             mGlassPanels.togglePanel(GlassPanels.PANEL_CLIPBOARD);
         } else if (viewId == R.id.glass_toolbar_edit) {
@@ -1353,6 +1355,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
         updateClipChip();
         updateBottomBar();
+        if (hasSuggestionStripView()) {
+            mSuggestionStripView.setIncognito(
+                    currentSettingsValues.mInputAttributes.mNoPersonalizedLearning);
+        }
         if (mGlassPanels != null) {
             mGlassPanels.applyOneHandedMode(isOneHandedAvailable()
                     ? currentSettingsValues.mOneHandedMode : Settings.ONE_HANDED_OFF);
@@ -2192,6 +2198,20 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
         startActivity(intent,
                 ActivityOptions.makeBasic().setLaunchDisplayId(currentDisplayId).toBundle());
+    }
+
+    void launchThemeSettings() {
+        mInputLogic.commitTyped(mSettings.getCurrent(), LastComposedWord.NOT_A_SEPARATOR);
+        requestHideSelf(0);
+        final Intent intent = new Intent();
+        intent.setClass(LatinIME.this, SettingsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(android.preference.PreferenceActivity.EXTRA_SHOW_FRAGMENT,
+                com.android.inputmethod.latin.settings.ThemeSettingsFragment.class.getName());
+        intent.putExtra(SettingsActivity.EXTRA_SHOW_HOME_AS_UP, true);
+        startActivityOnTheSameDisplay(intent);
     }
 
     void launchSettings(final String extraEntryValue) {
