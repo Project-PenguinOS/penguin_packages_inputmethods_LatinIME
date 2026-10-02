@@ -7,6 +7,8 @@
     <string name="glass_toolbar_one_handed">One-handed mode</string>
     <string name="glass_toolbar_settings">Keyboard settings</string>
     <string name="glass_toolbar_theme">Themes</string>
+    <string name="glass_toolbar_floating">Floating keyboard</string>
+    <string name="glass_floating_handle">Drag to move the keyboard</string>
     <string name="glass_incognito">Incognito: nothing you type here is learned</string>
     <string name="glass_toolbar_hide_keyboard">Hide keyboard</string>
     <string name="glass_paste_chip_description">Paste %s</string>

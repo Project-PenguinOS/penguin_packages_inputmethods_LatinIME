@@ -89,6 +89,7 @@ import com.android.inputmethod.latin.common.InputPointers;
 import com.android.inputmethod.latin.define.DebugFlags;
 import com.android.inputmethod.latin.glass.ClipboardHistory;
 import com.android.inputmethod.latin.glass.Dictation;
+import com.android.inputmethod.latin.glass.FloatingKeyboard;
 import com.android.inputmethod.latin.glass.GlassPanels;
 import com.android.inputmethod.latin.glass.GlassWindow;
 import com.android.inputmethod.latin.glass.PanelHost;
@@ -178,6 +179,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     private ClipboardHistory mClipboardHistory;
     private GlassPanels mGlassPanels;
     private Dictation mDictation;
+    private FloatingKeyboard mFloatingKeyboard;
     private final ClipboardHistory.Listener mClipboardListener = () -> updateClipChip();
     private final int[] mTmpLocation = new int[2];
     private InsetsUpdater mInsetsUpdater;
@@ -638,6 +640,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mClipboardHistory = new ClipboardHistory(this);
         mClipboardHistory.addListener(mClipboardListener);
         mGlassPanels = new GlassPanels(mPanelHost, mClipboardHistory, this::setOneHandedMode);
+        mFloatingKeyboard = new FloatingKeyboard(this, getWindow().getWindow(), () -> {
+            final MainKeyboardView keyboardView = mKeyboardSwitcher.getMainKeyboardView();
+            if (keyboardView != null) keyboardView.onWindowShown();
+        });
 
         mHandler.onCreate();
 
@@ -817,6 +823,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             requestHideSelf(0);
         } else if (viewId == R.id.glass_toolbar_settings) {
             launchSettings(SettingsActivity.EXTRA_ENTRY_VALUE_LONG_PRESS_COMMA);
+        } else if (viewId == R.id.glass_toolbar_floating) {
+            setFloatingKeyboard(!FloatingKeyboard.isEnabled(this));
         } else if (viewId == R.id.glass_toolbar_theme) {
             launchThemeSettings();
         } else if (viewId == R.id.glass_toolbar_clipboard) {
@@ -824,6 +832,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         } else if (viewId == R.id.glass_toolbar_edit) {
             mGlassPanels.togglePanel(GlassPanels.PANEL_TEXT_EDIT);
         } else if (viewId == R.id.glass_toolbar_one_handed) {
+            if (FloatingKeyboard.isEnabled(this)) {
+                FloatingKeyboard.setEnabled(this, false);
+                updateSoftInputWindowLayoutParameters();
+            }
             final int mode = mSettings.getCurrent().mOneHandedMode;
             setOneHandedMode(mode == Settings.ONE_HANDED_OFF
                     ? Settings.ONE_HANDED_RIGHT : Settings.ONE_HANDED_OFF);
@@ -933,6 +945,16 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     private boolean isOneHandedAvailable() {
         return getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    void setFloatingKeyboard(final boolean floating) {
+        FloatingKeyboard.setEnabled(this, floating);
+        if (floating && mSettings.getCurrent().mOneHandedMode != Settings.ONE_HANDED_OFF) {
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+                    .putInt(Settings.PREF_ONE_HANDED_MODE, Settings.ONE_HANDED_OFF).apply();
+        }
+        setOneHandedMode(floating ? Settings.ONE_HANDED_OFF : mSettings.getCurrent().mOneHandedMode);
+        updateSoftInputWindowLayoutParameters();
     }
 
     void setOneHandedMode(final int mode) {
@@ -1154,6 +1176,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             mSuggestionStripView.setListener(this, view);
         }
         setUpBottomBar(view);
+        final View floatHandle = view.findViewById(R.id.glass_float_handle);
+        if (floatHandle != null && mFloatingKeyboard != null) {
+            mFloatingKeyboard.attachHandle(floatHandle);
+        }
         if (mGlassPanels != null) {
             mGlassPanels.attach(view);
         }
@@ -1579,7 +1605,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             return;
         }
         mInputView.getLocationInWindow(mTmpLocation);
-        final int visibleTopY = mTmpLocation[1];
+        final int visibleTopY = mFloatingKeyboard != null && mFloatingKeyboard.isFloating()
+                ? getWindow().getWindow().getDecorView().getHeight() : mTmpLocation[1];
         mSuggestionStripView.getLocationOnScreen(mTmpLocation);
         mSuggestionStripView.setMoreSuggestionsHeight(mTmpLocation[1]);
         outInsets.touchableInsets = InputMethodService.Insets.TOUCHABLE_INSETS_FRAME;
@@ -1652,6 +1679,13 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         final Window window = getWindow().getWindow();
         ViewLayoutUtils.updateLayoutHeightOf(window,
                 isFullscreenMode() ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT);
+        final boolean floating = !isFullscreenMode() && FloatingKeyboard.isEnabled(this);
+        if (mFloatingKeyboard != null) {
+            mFloatingKeyboard.apply(floating);
+        }
+        if (mInputView instanceof InputView) {
+            ((InputView) mInputView).setFloating(floating);
+        }
         // This method may be called before {@link #setInputView(View)}.
         if (mInputView != null) {
             final View inputArea = window.findViewById(android.R.id.inputArea);

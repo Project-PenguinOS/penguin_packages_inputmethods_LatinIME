@@ -39,6 +39,7 @@ import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.RichInputMethodManager;
 import com.android.inputmethod.latin.WordComposer;
 import com.android.inputmethod.latin.define.ProductionFlags;
+import com.android.inputmethod.latin.glass.FloatingKeyboard;
 import com.android.inputmethod.latin.glass.GlassPanels;
 import com.android.inputmethod.latin.settings.Settings;
 import com.android.inputmethod.latin.settings.SettingsValues;
@@ -124,7 +125,9 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
                 mThemeContext, editorInfo);
         final Resources res = mThemeContext.getResources();
         int keyboardWidth = ResourceUtils.getDefaultKeyboardWidth(mThemeContext);
-        if (settingsValues.mOneHandedMode != Settings.ONE_HANDED_OFF
+        if (FloatingKeyboard.isEnabled(mThemeContext)) {
+            keyboardWidth = Math.round(keyboardWidth * FloatingKeyboard.WIDTH_RATIO);
+        } else if (settingsValues.mOneHandedMode != Settings.ONE_HANDED_OFF
                 && res.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             keyboardWidth = Math.round(keyboardWidth * GlassPanels.ONE_HANDED_WIDTH_RATIO);
         }

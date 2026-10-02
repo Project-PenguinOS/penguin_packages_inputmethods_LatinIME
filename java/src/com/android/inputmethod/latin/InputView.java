@@ -57,11 +57,21 @@ public final class InputView extends FrameLayout {
                 insets.getInsets(WindowInsets.Type.navigationBars()).bottom,
                 insets.getInsets(WindowInsets.Type.tappableElement()).bottom);
         final int overlap = Math.round(16 * getResources().getDisplayMetrics().density);
-        final int padding = Math.max(0, bottom - overlap);
+        final int padding = mFloating ? 0 : Math.max(0, bottom - overlap);
         if (getPaddingBottom() != padding) {
             setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), padding);
         }
         return super.onApplyWindowInsets(insets);
+    }
+
+    private boolean mFloating;
+
+    public void setFloating(final boolean floating) {
+        if (mFloating == floating) return;
+        mFloating = floating;
+        final View handle = findViewById(R.id.glass_float_handle);
+        if (handle != null) handle.setVisibility(floating ? VISIBLE : GONE);
+        requestApplyInsets();
     }
 
     public void setKeyboardTopPadding(final int keyboardTopPadding) {

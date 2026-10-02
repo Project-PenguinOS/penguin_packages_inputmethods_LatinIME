@@ -26,6 +26,19 @@
     android:orientation="vertical"
     android:paddingTop="8dp" >
 
+    <FrameLayout
+        android:id="@+id/glass_float_handle"
+        android:layout_width="match_parent"
+        android:layout_height="22dp"
+        android:contentDescription="@string/glass_floating_handle"
+        android:visibility="gone">
+        <View
+            android:layout_width="40dp"
+            android:layout_height="5dp"
+            android:layout_gravity="center"
+            android:background="@drawable/glass_float_handle" />
+    </FrameLayout>
+
     <!-- To ensure that key preview popup is correctly placed when the current system locale is
          one of RTL locales, layoutDirection="ltr" is needed in the SDK version 17+. -->
     <com.android.inputmethod.latin.suggestions.SuggestionStripView

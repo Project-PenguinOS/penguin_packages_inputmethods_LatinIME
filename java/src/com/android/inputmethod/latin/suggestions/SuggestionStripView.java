@@ -163,7 +163,8 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
             }
         };
         for (final int id : new int[] { R.id.glass_toolbar_clipboard, R.id.glass_toolbar_edit,
-                R.id.glass_toolbar_one_handed, R.id.glass_toolbar_theme,
+                R.id.glass_toolbar_one_handed, R.id.glass_toolbar_floating,
+                R.id.glass_toolbar_theme,
                 R.id.glass_toolbar_settings,
                 R.id.glass_toolbar_hide, R.id.glass_clip_chip }) {
             findViewById(id).setOnClickListener(toolbarClick);
