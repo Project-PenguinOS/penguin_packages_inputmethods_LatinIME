@@ -47,7 +47,7 @@ final class PreferencesSettingsScreen extends SettingsScreen {
                 R.string.number_row_password, R.string.number_row_password_summary, false);
         switchPref(layout, 0, Settings.PREF_SHOW_PUNCTUATION_KEYS,
                 R.string.glass_settings_punctuation_keys,
-                R.string.glass_settings_punctuation_keys_summary, false);
+                R.string.glass_settings_punctuation_keys_summary, true);
         switchPref(layout, 0, Settings.PREF_SHOW_LONGPRESS_HINTS, R.string.show_longpress_hints,
                 R.string.show_longpress_hints_summary, true);
         updateNumberRowPassword();
