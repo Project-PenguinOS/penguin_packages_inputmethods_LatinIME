@@ -5,11 +5,11 @@
     <color name="glass_sheet_rim">#80FFFFFF</color>
     <color name="glass_sheet_sheen">#59FFFFFF</color>
     <color name="glass_key">#E6FFFFFF</color>
-    <color name="glass_key_pressed">#B3F2F2F7</color>
-    <color name="glass_key_functional">#E6FFFFFF</color>
-    <color name="glass_key_functional_pressed">#B3F2F2F7</color>
-    <color name="glass_key_action">#FFFFFFFF</color>
-    <color name="glass_key_action_pressed">#B3F2F2F7</color>
+    <color name="glass_key_pressed">#E0B4B8C1</color>
+    <color name="glass_key_functional">#D9ABB0BA</color>
+    <color name="glass_key_functional_pressed">#F2FFFFFF</color>
+    <color name="glass_key_action">#D9ABB0BA</color>
+    <color name="glass_key_action_pressed">#F2FFFFFF</color>
     <color name="glass_key_accent">#FF007AFF</color>
     <color name="glass_key_accent_pressed">#FF0062CC</color>
     <color name="glass_key_shadow">#4D000000</color>

@@ -180,6 +180,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     // TODO: Move these {@link View}s to {@link KeyboardSwitcher}.
     private View mInputView;
     private GlassWindow mGlassWindow;
+    private int mLastUiModeNight = -1;
     private ClipboardHistory mClipboardHistory;
     private GlassPanels mGlassPanels;
     private EmojiSearchController mEmojiSearch;
@@ -640,6 +641,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         Fonts.init(this);
         setTheme(R.style.PenguinImeWindow);
         super.onCreate();
+        mLastUiModeNight = getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
         mGlassWindow = new GlassWindow(this, getWindow().getWindow());
         updateGlassWindow();
         mClipboardHistory = new ClipboardHistory(this);
@@ -1193,8 +1196,20 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                 cleanupInternalStateForFinishInput();
             }
         }
+        final boolean nightChanged = mLastUiModeNight != (conf.uiMode
+                & Configuration.UI_MODE_NIGHT_MASK);
+        mLastUiModeNight = conf.uiMode & Configuration.UI_MODE_NIGHT_MASK;
         super.onConfigurationChanged(conf);
         updateGlassWindow();
+        if (nightChanged) {
+            mKeyboardSwitcher.updateKeyboardTheme(mDisplayContext);
+            final EditorInfo editorInfo = getCurrentInputEditorInfo();
+            if (editorInfo != null && mInputView != null) {
+                mKeyboardSwitcher.loadKeyboard(editorInfo, mSettings.getCurrent(),
+                        getCurrentAutoCapsState(), getCurrentRecapitalizeState());
+                updateBottomBar();
+            }
+        }
     }
 
     @Override
