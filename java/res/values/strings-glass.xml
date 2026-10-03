@@ -48,7 +48,7 @@
     <string name="glass_settings_emoji_suggestions">Emoji suggestions</string>
     <string name="glass_settings_emoji_suggestions_summary">Suggest emoji for the word you are typing</string>
     <string name="glass_settings_match_app">Match app appearance</string>
-    <string name="glass_settings_match_app_summary">Light keyboard in light apps, dark keyboard in dark apps</string>
+    <string name="glass_settings_match_app_summary">Use the dark keyboard in apps that are always dark, even when the system is light</string>
     <string name="glass_settings_toolbar">Show toolbar</string>
     <string name="glass_settings_toolbar_summary">Clipboard, text editing and more above the keys when there are no suggestions</string>
 </resources>
