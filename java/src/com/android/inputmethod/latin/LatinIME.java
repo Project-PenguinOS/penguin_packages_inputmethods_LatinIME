@@ -890,7 +890,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         final View globe = mInputView.findViewById(R.id.glass_bar_globe);
         final View mic = mInputView.findViewById(R.id.glass_bar_mic);
         if (globe != null) {
-            globe.setVisibility(shouldShowLanguageSwitchKey() ? View.VISIBLE : View.GONE);
+            globe.setVisibility(mRichImm.hasMultipleEnabledSubtypesInThisIme(false)
+                    ? View.VISIBLE : View.GONE);
         }
         if (mic != null) {
             mic.setVisibility(mSettings.getCurrent().mShowsVoiceInputKey

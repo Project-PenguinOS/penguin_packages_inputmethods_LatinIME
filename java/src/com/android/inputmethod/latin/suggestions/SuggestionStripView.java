@@ -241,13 +241,14 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
         if (noSuggestions) {
             mToolbarForced = false;
         }
+        final boolean notice = mStripVisibilityGroup.isShowingImportantNoticeStrip();
         final boolean showToolbar = mToolbarEnabled
-                && (noSuggestions || mToolbarForced)
-                && !mStripVisibilityGroup.isShowingImportantNoticeStrip();
+                && (noSuggestions || mToolbarForced) && !notice;
         mToolbar.setVisibility(showToolbar && !mDictating ? VISIBLE : GONE);
-        mSuggestionsStrip.setVisibility(showToolbar || mDictating ? INVISIBLE : VISIBLE);
+        mSuggestionsStrip.setVisibility(showToolbar || mDictating || notice
+                ? INVISIBLE : VISIBLE);
         mDictationStatus.setVisibility(mDictating ? VISIBLE : GONE);
-        mGridButton.setVisibility(mToolbarEnabled && !mDictating ? VISIBLE : GONE);
+        mGridButton.setVisibility(mToolbarEnabled && !mDictating && !notice ? VISIBLE : GONE);
         mGridButton.setActivated(mToolbarForced);
         if (mIncognito) {
             mGridButton.setImageResource(R.drawable.ic_f7_eye_slash_fill);
