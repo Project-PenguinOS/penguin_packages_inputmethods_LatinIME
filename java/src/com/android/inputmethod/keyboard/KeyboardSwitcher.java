@@ -71,6 +71,25 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
     private KeyboardTheme mKeyboardTheme;
     private Context mThemeContext;
     private int mActiveUiMode;
+    private Resources mBaseResources;
+    private Boolean mNightOverride;
+
+    public boolean setNightOverride(final Boolean night) {
+        if (java.util.Objects.equals(mNightOverride, night)) return false;
+        mNightOverride = night;
+        return true;
+    }
+
+    public Context getThemeContext() {
+        return mThemeContext;
+    }
+
+    private int effectiveUiMode(final Context context) {
+        final int uiMode = context.getResources().getConfiguration().uiMode;
+        if (mNightOverride == null) return uiMode;
+        return (uiMode & ~Configuration.UI_MODE_NIGHT_MASK)
+                | (mNightOverride ? Configuration.UI_MODE_NIGHT_YES : Configuration.UI_MODE_NIGHT_NO);
+    }
 
     private static final KeyboardSwitcher sInstance = new KeyboardSwitcher();
 
@@ -105,14 +124,22 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
 
     private boolean updateKeyboardThemeAndContextThemeWrapper(final Context context,
             final KeyboardTheme keyboardTheme) {
+        final int uiMode = effectiveUiMode(context);
         final boolean darkModeChanged = (mActiveUiMode & Configuration.UI_MODE_NIGHT_MASK)
-                != (context.getResources().getConfiguration().uiMode
-                    & Configuration.UI_MODE_NIGHT_MASK);
+                != (uiMode & Configuration.UI_MODE_NIGHT_MASK);
         if (mThemeContext == null || !keyboardTheme.equals(mKeyboardTheme) || darkModeChanged
-                || !mThemeContext.getResources().equals(context.getResources())) {
+                || !context.getResources().equals(mBaseResources)) {
             mKeyboardTheme = keyboardTheme;
-            mThemeContext = new ContextThemeWrapper(context, keyboardTheme.mStyleId);
-            mActiveUiMode = context.getResources().getConfiguration().uiMode;
+            mBaseResources = context.getResources();
+            final ContextThemeWrapper themeContext =
+                    new ContextThemeWrapper(context, keyboardTheme.mStyleId);
+            if (mNightOverride != null) {
+                final Configuration override = new Configuration();
+                override.uiMode = uiMode;
+                themeContext.applyOverrideConfiguration(override);
+            }
+            mThemeContext = themeContext;
+            mActiveUiMode = uiMode;
             KeyboardLayoutSet.onKeyboardThemeChanged();
             return true;
         }

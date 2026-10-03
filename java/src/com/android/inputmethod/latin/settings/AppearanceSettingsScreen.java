@@ -18,9 +18,12 @@ final class AppearanceSettingsScreen extends SettingsScreen {
 
     @Override
     void build(final HigList hig) {
-        hig.group().row(R.drawable.ic_f7_paintbrush, str(R.string.settings_screen_theme),
+        final HigList.Group theme = hig.group();
+        theme.row(R.drawable.ic_f7_paintbrush, str(R.string.settings_screen_theme),
                 ThemeSettingsScreen.selectedThemeName(mActivity), true,
                 v -> openScreen(SettingsActivity.SCREEN_THEME));
+        switchPref(theme, 0, Settings.PREF_MATCH_APP_APPEARANCE,
+                R.string.glass_settings_match_app, R.string.glass_settings_match_app_summary, true);
 
         hig.header(str(R.string.hig_section_layouts));
         final HigList.Group layouts = hig.group();

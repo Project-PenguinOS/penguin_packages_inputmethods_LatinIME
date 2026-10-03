@@ -14,7 +14,8 @@ import com.android.inputmethod.latin.R;
 import java.util.function.Consumer;
 
 public final class GlassWindow {
-    private final Context mContext;
+    private final Context mAppContext;
+    private Context mContext;
     private final Window mWindow;
     private final WindowManager mWindowManager;
     private final Consumer<Boolean> mBlurListener = this::onCrossWindowBlurChanged;
@@ -23,15 +24,21 @@ public final class GlassWindow {
     private boolean mListening;
 
     public GlassWindow(final Context context, final Window window) {
+        mAppContext = context;
         mContext = context;
         mWindow = window;
         mWindowManager = context.getSystemService(WindowManager.class);
     }
 
     public void setEnabled(final boolean enabled) {
+        setEnabled(enabled, mAppContext);
+    }
+
+    public void setEnabled(final boolean enabled, final Context colors) {
+        mContext = colors;
         mEnabled = enabled;
         if (enabled && !mListening && mWindowManager != null) {
-            mWindowManager.addCrossWindowBlurEnabledListener(mContext.getMainExecutor(),
+            mWindowManager.addCrossWindowBlurEnabledListener(mAppContext.getMainExecutor(),
                     mBlurListener);
             mListening = true;
         } else if (!enabled && mListening) {

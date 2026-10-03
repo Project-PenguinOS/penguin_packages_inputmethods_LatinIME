@@ -71,6 +71,7 @@ public class SettingsValues {
     public final boolean mShowNumberRowPassword;
     public final boolean mShowLongpressHints;
     public final boolean mShowToolbar;
+    public final boolean mMatchAppAppearance;
     public final boolean mEmojiSuggestionsEnabled;
     public final boolean mShowPunctuationKeys;
     public final boolean mClipboardHistoryEnabled;
@@ -155,6 +156,7 @@ public class SettingsValues {
         mShowNumberRowPassword = prefs.getBoolean(Settings.PREF_SHOW_NUMBER_ROW_PASSWORD, false);
         mShowLongpressHints = prefs.getBoolean(Settings.PREF_SHOW_LONGPRESS_HINTS, true);
         mShowToolbar = prefs.getBoolean(Settings.PREF_SHOW_TOOLBAR, true);
+        mMatchAppAppearance = prefs.getBoolean(Settings.PREF_MATCH_APP_APPEARANCE, true);
         mEmojiSuggestionsEnabled = prefs.getBoolean(Settings.PREF_EMOJI_SUGGESTIONS, true);
         mShowPunctuationKeys = prefs.getBoolean(Settings.PREF_SHOW_PUNCTUATION_KEYS, true);
         mClipboardHistoryEnabled = prefs.getBoolean(Settings.PREF_CLIPBOARD_HISTORY, true);

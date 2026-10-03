@@ -107,6 +107,7 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
 
     public static final String PREF_SHOW_LONGPRESS_HINTS = "pref_show_longpress_hints";
     public static final String PREF_SHOW_TOOLBAR = "pref_show_toolbar";
+    public static final String PREF_MATCH_APP_APPEARANCE = "pref_match_app_appearance";
     public static final String PREF_EMOJI_SUGGESTIONS = "pref_emoji_suggestions";
     public static final String PREF_SHOW_PUNCTUATION_KEYS = "pref_show_punctuation_keys";
     public static final String PREF_CLIPBOARD_HISTORY = "pref_clipboard_history";

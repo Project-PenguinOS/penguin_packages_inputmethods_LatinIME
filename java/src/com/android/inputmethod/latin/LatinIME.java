@@ -90,6 +90,7 @@ import com.android.inputmethod.latin.common.CoordinateUtils;
 import com.android.inputmethod.latin.common.InputPointers;
 import com.android.inputmethod.latin.define.DebugFlags;
 import com.android.inputmethod.latin.emoji.EmojiSuggestions;
+import com.android.inputmethod.latin.glass.AppAppearance;
 import com.android.inputmethod.latin.glass.ClipboardHistory;
 import com.android.inputmethod.latin.glass.Dictation;
 import com.android.inputmethod.latin.glass.FloatingKeyboard;
@@ -824,8 +825,16 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     private void updateGlassWindow() {
         if (mGlassWindow != null) {
-            mGlassWindow.setEnabled(KeyboardTheme.isGlass(this));
+            final Context colors = mKeyboardSwitcher.getThemeContext();
+            mGlassWindow.setEnabled(KeyboardTheme.isGlass(this),
+                    colors != null ? colors : this);
         }
+    }
+
+    private Boolean appearanceOverride(final EditorInfo editorInfo) {
+        if (editorInfo == null || !mSettings.getCurrent().mMatchAppAppearance) return null;
+        final Boolean light = AppAppearance.isLight(this, editorInfo.packageName);
+        return light == null ? null : !light;
     }
 
     @Override
@@ -917,7 +926,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         } else {
             mInputView.setBackground(keyboardBackground.getConstantState().newDrawable());
         }
-        int iconColor = getColor(R.color.glass_icon);
+        int iconColor = mInputView.getContext().getColor(R.color.glass_icon);
         if (!glass) {
             final TypedArray a = keyboardView.getContext().obtainStyledAttributes(null,
                     R.styleable.Keyboard_Key, R.attr.keyboardViewStyle, R.style.KeyboardView);
@@ -1202,6 +1211,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         super.onConfigurationChanged(conf);
         updateGlassWindow();
         if (nightChanged) {
+            AppAppearance.invalidate();
             mKeyboardSwitcher.updateKeyboardTheme(mDisplayContext);
             final EditorInfo editorInfo = getCurrentInputEditorInfo();
             if (editorInfo != null && mInputView != null) {
@@ -1348,7 +1358,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mGestureConsumer = GestureConsumer.NULL_GESTURE_CONSUMER;
         mRichImm.refreshSubtypeCaches();
         final KeyboardSwitcher switcher = mKeyboardSwitcher;
+        switcher.setNightOverride(appearanceOverride(editorInfo));
         switcher.updateKeyboardTheme(mDisplayContext);
+        updateGlassWindow();
         final MainKeyboardView mainKeyboardView = switcher.getMainKeyboardView();
         // If we are starting input in a different text field from before, we'll have to reload
         // settings, so currentSettingsValues can't be final.
