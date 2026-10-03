@@ -37,7 +37,7 @@ android {
     ndkVersion = "29.0.14206865"
 
     defaultConfig {
-        applicationId = "com.penguin.keyboard"
+        applicationId = "com.penguin.inputmethod.latin"
         minSdk = 30
         targetSdk = 36
         versionCode = 260930

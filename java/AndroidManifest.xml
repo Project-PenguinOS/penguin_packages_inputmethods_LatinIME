@@ -210,7 +210,7 @@
 
         <!-- Content providers -->
         <provider android:name="com.android.inputmethod.latin.glass.ClipImageProvider"
-             android:authorities="com.penguin.keyboard.clipimages"
+             android:authorities="com.penguin.inputmethod.latin.clipimages"
              android:exported="false"
              android:grantUriPermissions="true" />
 
