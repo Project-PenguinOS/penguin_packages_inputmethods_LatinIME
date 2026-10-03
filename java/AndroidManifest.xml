@@ -132,13 +132,18 @@
         </activity>
 
         <activity android:name=".settings.SettingsActivity"
-             android:theme="@style/platformSettingsTheme"
+             android:theme="@style/Theme.PenguinHig"
              android:label="@string/english_ime_settings"
              android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".settings.LegacySettingsActivity"
+             android:theme="@style/platformSettingsTheme"
+             android:label="@string/english_ime_settings"
+             android:exported="false"/>
 
         <activity android:name=".spellcheck.SpellCheckerSettingsActivity"
              android:theme="@style/platformSettingsTheme"

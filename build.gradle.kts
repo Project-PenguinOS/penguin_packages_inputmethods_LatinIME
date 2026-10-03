@@ -118,6 +118,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 dependencies {
     implementation("com.google.code.findbugs:jsr305:3.0.2")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.preference:preference:1.2.1")

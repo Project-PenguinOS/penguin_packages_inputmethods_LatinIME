@@ -49,6 +49,8 @@ android_app {
         "androidx.legacy_legacy-support-v4",
         "androidx.recyclerview_recyclerview",
         "androidx.viewpager2_viewpager2",
+        "androidx.appcompat_appcompat",
+        "com.google.android.material_material",
     ],
 
     // Do not compress dictionary files to mmap dict data runtime

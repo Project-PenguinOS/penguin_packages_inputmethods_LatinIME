@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="label_primary">#FF000000</color>
+    <color name="label_secondary">#993C3C43</color>
+    <color name="separator">#4A3C3C43</color>
+    <color name="system_red">#FF3B30</color>
+    <color name="hig_accent">#FF007AFF</color>
+    <color name="hig_switch_off">#FFE9E9EA</color>
+    <color name="hig_grouped_background">#FFF2F2F7</color>
+    <color name="hig_grouped_cell">#FFFFFFFF</color>
+    <color name="hig_cell_pressed">#FFD1D1D6</color>
+    <color name="hig_tertiary_label">#4D3C3C43</color>
+    <color name="hig_alert_background">#FFF2F2F2</color>
+    <color name="hig_sheet_background">#FFFFFFFF</color>
+    <color name="hig_scrim">#66000000</color>
+    <color name="glass_bar">#B3F2F2F7</color>
+    <color name="hig_switch_outline">#FF79747E</color>
+    <color name="hig_on_accent">#FFFFFFFF</color>
+</resources>

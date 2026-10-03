@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PenguinHig" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/hig_grouped_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">@bool/light_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/light_bars</item>
+        <item name="colorAccent">@color/hig_accent</item>
+        <item name="android:textColorSecondary">@color/hig_tertiary_label</item>
+    </style>
+
+    <style name="Hig.TextAppearance.NavTitle" parent="">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/label_primary</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="Hig.TextAppearance.LargeTitle" parent="">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/label_primary</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:textSize">34sp</item>
+    </style>
+</resources>

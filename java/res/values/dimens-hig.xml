@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="hig_min_touch_target">48dp</dimen>
+    <dimen name="hig_navigation_back_label_max_width">112dp</dimen>
+    <dimen name="hig_navigation_bar_height">56dp</dimen>
+</resources>

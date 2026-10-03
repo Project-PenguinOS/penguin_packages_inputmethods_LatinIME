@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="hig_navigation_back">Back</string>
+    <string name="hig_cancel">Cancel</string>
+    <string name="hig_reset_to_default">Reset to Default</string>
+
+    <string name="hig_section_typing">Typing</string>
+    <string name="hig_section_layout">Layout</string>
+    <string name="hig_section_toolbar">Toolbar &amp; Clipboard</string>
+    <string name="hig_section_key_feedback">Key Feedback</string>
+    <string name="hig_section_dictionaries">Dictionaries</string>
+    <string name="hig_section_suggestions">Suggestions</string>
+    <string name="hig_section_personalization">Personalization</string>
+    <string name="hig_section_timing">Keys</string>
+    <string name="hig_section_trackpad">Trackpad</string>
+    <string name="hig_section_other">Other</string>
+    <string name="hig_section_layouts">Layouts</string>
+    <string name="hig_slider_footer">Tap a value to reset it to its default.</string>
+    <string name="hig_debug_settings" translatable="false">Debug settings</string>
+
+    <string name="about_category_title">About</string>
+    <string name="credits_title">Credits</string>
+    <string name="credits_app_name" translatable="false">Penguin Keyboard</string>
+    <string name="credits_version">Version <xliff:g id="version_name" example="1.6.1">%1$s</xliff:g> (<xliff:g id="version_code" example="260930">%2$d</xliff:g>)</string>
+    <string name="credits_team_category">PenguinOS team</string>
+    <string name="credits_open_telegram">Open <xliff:g id="handle" example="\@Whoraj">%1$s</xliff:g> in Telegram</string>
+    <string name="credits_kitsune">our kitsune</string>
+</resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hig_grouped_background">
+
+    <com.android.inputmethod.latin.settings.hig.HigBlurTarget
+        android:id="@+id/blur_target"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/hig_grouped_background">
+
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="ifContentScrolls">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/large_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="4dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:accessibilityHeading="true"
+                    android:textAppearance="@style/Hig.TextAppearance.LargeTitle"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="32dp" />
+            </LinearLayout>
+        </ScrollView>
+    </com.android.inputmethod.latin.settings.hig.HigBlurTarget>
+
+    <com.android.inputmethod.latin.settings.hig.HigBlurView
+        android:id="@+id/nav_glass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/status_spacer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+
+            <include
+                android:id="@+id/nav_bar"
+                layout="@layout/hig_navigation_bar" />
+
+            <View
+                android:id="@+id/nav_hairline"
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:alpha="0"
+                android:background="@color/separator" />
+        </LinearLayout>
+    </com.android.inputmethod.latin.settings.hig.HigBlurView>
+</FrameLayout>
