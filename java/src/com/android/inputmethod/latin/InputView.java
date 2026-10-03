@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -53,15 +54,42 @@ public final class InputView extends FrameLayout {
 
     @Override
     public WindowInsets onApplyWindowInsets(final WindowInsets insets) {
-        final int bottom = Math.max(
+        final int bottom = mFloating ? 0 : Math.max(
                 insets.getInsets(WindowInsets.Type.navigationBars()).bottom,
                 insets.getInsets(WindowInsets.Type.tappableElement()).bottom);
-        final int overlap = Math.round(16 * getResources().getDisplayMetrics().density);
-        final int padding = mFloating ? 0 : Math.max(0, bottom - overlap);
+        final float density = getResources().getDisplayMetrics().density;
+        final boolean shareNavRow = bottom >= Math.round(40 * density) && isGestureNavigation();
+        final View bar = findViewById(R.id.glass_bottom_bar);
+        if (bar != null) {
+            final ViewGroup.LayoutParams lp = bar.getLayoutParams();
+            final int height = shareNavRow ? bottom
+                    : getResources().getDimensionPixelSize(R.dimen.glass_bottom_bar_height);
+            final int side = shareNavRow ? Math.round(64 * density)
+                    : getResources().getDimensionPixelSize(R.dimen.glass_bottom_bar_side_padding);
+            if (lp.height != height) {
+                lp.height = height;
+                bar.setLayoutParams(lp);
+            }
+            bar.setPaddingRelative(side, 0, side, 0);
+        }
+        final int padding = shareNavRow ? 0 : bottom;
         if (getPaddingBottom() != padding) {
             setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), padding);
         }
+        final View emoji = findViewById(R.id.emoji_palettes_view);
+        if (emoji != null) {
+            final int emojiPadding = shareNavRow ? bottom : 0;
+            if (emoji.getPaddingBottom() != emojiPadding) {
+                emoji.setPadding(emoji.getPaddingLeft(), emoji.getPaddingTop(),
+                        emoji.getPaddingRight(), emojiPadding);
+            }
+        }
         return super.onApplyWindowInsets(insets);
+    }
+
+    private boolean isGestureNavigation() {
+        return android.provider.Settings.Secure.getInt(getContext().getContentResolver(),
+                "navigation_mode", 0) == 2;
     }
 
     private boolean mFloating;

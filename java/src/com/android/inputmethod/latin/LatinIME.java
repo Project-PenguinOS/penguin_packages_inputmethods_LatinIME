@@ -32,6 +32,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -834,6 +835,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             setFloatingKeyboard(!FloatingKeyboard.isEnabled(this));
         } else if (viewId == R.id.glass_toolbar_theme) {
             launchThemeSettings();
+        } else if (viewId == R.id.glass_strip_grid) {
+            mGlassPanels.togglePanel(GlassPanels.PANEL_TOOLS);
         } else if (viewId == R.id.glass_toolbar_clipboard) {
             mGlassPanels.togglePanel(GlassPanels.PANEL_CLIPBOARD);
         } else if (viewId == R.id.glass_toolbar_edit) {
@@ -896,6 +899,36 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         if (mic != null) {
             mic.setVisibility(mSettings.getCurrent().mShowsVoiceInputKey
                     ? View.VISIBLE : View.INVISIBLE);
+        }
+        applyThemeToInputArea();
+    }
+
+    private void applyThemeToInputArea() {
+        final View keyboardView = mInputView.findViewById(R.id.keyboard_view);
+        if (keyboardView == null) return;
+        final boolean glass = KeyboardTheme.isGlass(this);
+        final Drawable keyboardBackground = keyboardView.getBackground();
+        if (glass || keyboardBackground == null
+                || keyboardBackground.getConstantState() == null) {
+            mInputView.setBackground(null);
+        } else {
+            mInputView.setBackground(keyboardBackground.getConstantState().newDrawable());
+        }
+        int iconColor = getColor(R.color.glass_icon);
+        if (!glass) {
+            final TypedArray a = keyboardView.getContext().obtainStyledAttributes(null,
+                    R.styleable.Keyboard_Key, R.attr.keyboardViewStyle, R.style.KeyboardView);
+            iconColor = a.getColor(R.styleable.Keyboard_Key_keyTextColor, iconColor);
+            a.recycle();
+        }
+        final android.content.res.ColorStateList tint =
+                android.content.res.ColorStateList.valueOf(iconColor);
+        for (final int id : new int[] { R.id.glass_bar_globe, R.id.glass_bar_emoji,
+                R.id.glass_bar_mic }) {
+            final View v = mInputView.findViewById(id);
+            if (v instanceof android.widget.ImageView) {
+                ((android.widget.ImageView) v).setImageTintList(tint);
+            }
         }
     }
 
@@ -1081,6 +1114,17 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         @Override
         public void closePanel() {
             mGlassPanels.hidePanel();
+        }
+
+        @Override
+        public void onToolAction(final int viewId) {
+            mGlassPanels.hidePanel();
+            if (viewId == R.id.glass_bar_emoji || viewId == R.id.glass_bar_mic) {
+                final View v = mInputView.findViewById(viewId);
+                if (v != null) v.performClick();
+                return;
+            }
+            onToolbarAction(viewId);
         }
 
         @Override

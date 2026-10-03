@@ -33,7 +33,7 @@
     <color name="ios_label">#FFFFFFFF</color>
     <color name="ios_secondary_label">#99EBEBF5</color>
     <color name="ios_section_header">#99EBEBF5</color>
-    <color name="ios_switch_on">#FF30D158</color>
+    <color name="ios_switch_on">#FF0A84FF</color>
     <color name="ios_switch_off">#52787880</color>
     <color name="ios_switch_thumb">#FFFFFFFF</color>
 </resources>

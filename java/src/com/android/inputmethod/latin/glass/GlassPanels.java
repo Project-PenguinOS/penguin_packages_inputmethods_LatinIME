@@ -15,6 +15,7 @@ public final class GlassPanels {
     public static final int PANEL_NONE = 0;
     public static final int PANEL_CLIPBOARD = 1;
     public static final int PANEL_TEXT_EDIT = 2;
+    public static final int PANEL_TOOLS = 3;
 
     public static final float ONE_HANDED_WIDTH_RATIO = 0.82f;
 
@@ -71,6 +72,9 @@ public final class GlassPanels {
             break;
         case PANEL_TEXT_EDIT:
             panel = new TextEditPanelView(context, mHost);
+            break;
+        case PANEL_TOOLS:
+            panel = new ToolsPanelView(context, mHost);
             break;
         default:
             return;

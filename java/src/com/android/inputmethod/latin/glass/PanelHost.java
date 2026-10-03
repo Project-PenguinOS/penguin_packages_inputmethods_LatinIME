@@ -11,6 +11,8 @@ public interface PanelHost {
 
     void performFeedback(android.view.View view);
 
+    void onToolAction(int viewId);
+
     void closePanel();
 
     void enableClipboardHistory();

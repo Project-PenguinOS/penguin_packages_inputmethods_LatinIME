@@ -175,6 +175,10 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
         mGridButton.setOnClickListener(v -> {
             AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(
                     Constants.CODE_UNSPECIFIED, v);
+            if (mSuggestedWords.isEmpty()) {
+                if (mListener != null) mListener.onToolbarAction(R.id.glass_strip_grid);
+                return;
+            }
             mToolbarForced = !mToolbarForced;
             updateToolbarVisibility();
         });
