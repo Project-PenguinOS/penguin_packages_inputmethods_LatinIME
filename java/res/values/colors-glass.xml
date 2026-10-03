@@ -34,6 +34,6 @@
     <color name="ios_secondary_label">#993C3C43</color>
     <color name="ios_section_header">#993C3C43</color>
     <color name="ios_switch_on">#FF007AFF</color>
-    <color name="ios_switch_off">#29787880</color>
+    <color name="ios_switch_off">#FFE9E9EA</color>
     <color name="ios_switch_thumb">#FFFFFFFF</color>
 </resources>

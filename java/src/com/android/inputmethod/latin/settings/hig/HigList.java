@@ -121,13 +121,15 @@ public final class HigList {
             row.addView(titleBlock(title, subtitle), new LinearLayout.LayoutParams(0,
                     ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-            MaterialSwitch toggle = new MaterialSwitch(new ContextThemeWrapper(mContext,
-                    com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar));
-            int accent = mContext.getColor(R.color.hig_accent);
-            int outline = mContext.getColor(R.color.hig_switch_outline);
-            toggle.setTrackTintList(checkedList(accent, mContext.getColor(R.color.hig_switch_off)));
-            toggle.setThumbTintList(checkedList(Color.WHITE, outline));
-            toggle.setTrackDecorationTintList(checkedList(Color.TRANSPARENT, outline));
+            SwitchCompat toggle = new SwitchCompat(new ContextThemeWrapper(mContext,
+                    androidx.appcompat.R.style.Theme_AppCompat_DayNight_NoActionBar));
+            toggle.setThumbDrawable(mContext.getDrawable(R.drawable.ios_switch_thumb));
+            toggle.setTrackDrawable(mContext.getDrawable(R.drawable.ios_switch_track));
+            toggle.setThumbTintList(null);
+            toggle.setTrackTintList(null);
+            toggle.setShowText(false);
+            toggle.setSwitchMinWidth(dp(51));
+            toggle.setBackground(null);
             toggle.setChecked(checked);
             toggle.setOnCheckedChangeListener(listener);
             toggle.setContentDescription(title);
